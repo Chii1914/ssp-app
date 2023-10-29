@@ -12,3 +12,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'Swiss 721 BT', Arial, sans-serif;
+  src: url('../public/Swis721BT.ttf')format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.MuiTypography-root{
+  font-family: 'Swiss 721 BT', Arial, sans-serif;
+}

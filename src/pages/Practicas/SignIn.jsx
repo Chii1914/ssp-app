@@ -1,9 +1,12 @@
 import React from "react";
 import PageContainer from "../../components/container/PageContainer";
-import { Box, Typography, Container, Paper } from "@mui/material";
+import { Box, Typography, Paper, Grid, useTheme, useMediaQuery } from "@mui/material";
 import ButtonsSign from "./Components/ButtonsLog";
 
 function SignIn() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <PageContainer title="Prácticas - Postulación a practicas profesionales | Administración Pública" description="Sistema de prácticas profesionales">
       <Box
@@ -17,53 +20,44 @@ function SignIn() {
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
           minHeight: "983px",
-          padding: "100px",
+          padding: isMobile ? 2 : 10,
+          flexDirection: "column",
         }}
-        minHeight={700}
       >
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap={2}
-          justifyContent={"center"}
-          alignItems="center"
-        >
-         <Box sx ={{
-          bgcolor: 'white',
-          color: 'black',
-          boxShadow: 4,
-          justifyContent: 'center',
-          width: '100%',
-          alignItems: 'center',
-         }}>
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{
-              color: "black",
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-            }}
-          >
-            Postulación a Prácticas Profesionaless
-            </Typography>
-            
-            <ButtonsSign/>
-            
-          
-          </Box> 
-        </Box>
-      </Box>
-      <Box
-        padding={0}
-        display="flex"
-        flexDirection="column"
-        gap={5}
-        alignItems="center"
-      >
-        
-
+        <Paper elevation={24} sx={{ width: '100%', padding: 5 }}>
+          <Grid container justifyContent="center" alignItems="center" spacing={2}>
+            <Grid item xs={12}>
+              <Typography
+                variant={isMobile ? "h5" : "h3"}
+                component="h1"
+                sx={{
+                  color: "black",
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  letterSpacing: ".3rem",
+                  textAlign: "center",
+                }}
+              >
+                Postulación a Prácticas Profesionales
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+              <img
+                src="https://practicas.administracionpublica-uv.cl/imagenes/logo_sis_practicas.png"
+                alt="Logo Practicas Profesionales"
+                style={{ width: '100px', height: '100px' }} // Adjust the size as needed
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography sx={{ textAlign: "center" }}>
+                Bienvenido al sistema de prácticas de Administración Pública de la Universidad de Valparaíso. Para continuar, necesitas ingresar con tu cuenta. De no contar con una, puedes registrarte en nuestro sistema.
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <ButtonsSign />
+            </Grid>
+          </Grid>
+        </Paper>
       </Box>
     </PageContainer>
   );
