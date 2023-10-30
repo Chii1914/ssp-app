@@ -12,7 +12,7 @@ const FullLayout = Loadable(
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
 
 /* ****Pages***** */
-const HomePage = Loadable(lazy(() => import("../pages/Home/Home")));
+const SingIn = Loadable(lazy(() => import("../pages/Practicas/SignIn")));
 const Deudas = Loadable(lazy(() => import("../pages/Deudas/Deudas")));
 const Eventos = Loadable(lazy(() => import("../pages/Eventos/Eventos")));
 const Categorias = Loadable(
@@ -29,7 +29,7 @@ const Router = [
     path: "/",
     element: <FullLayout />,
     children: [
-      { path: "", exact: true, element: <HomePage /> },
+      { path: "", exact: true, element: <SingIn /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "404", element: <Error /> },
       { path: "deudas", exact: true, element: <Deudas /> },

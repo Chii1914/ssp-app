@@ -1,8 +1,7 @@
 import React from "react";
 import PageContainer from "../../components/container/PageContainer";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
-import imag1 from "./imag1.png"
 
 function Home() {
   return (
