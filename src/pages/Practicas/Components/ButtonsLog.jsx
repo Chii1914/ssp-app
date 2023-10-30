@@ -10,17 +10,22 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider, useTheme, useMediaQuery } from "@mui/material";
 import axios from "axios";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
+
 export default function SignIn() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [inputs, setInputs] = useState({
     RUN: "",
     password: "",
   });
+
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -46,17 +51,24 @@ export default function SignIn() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      
-        <Box
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '50vh',
+          p: isMobile ? 2 : 4,
+        }}
+      >
+          <Box
           sx={{
-            width: "500px",
-            height: "500px",
+            width: isMobile ? '100%' : '500px',
             backgroundColor: "white",
             border: "1px solid gray",
             borderRadius: "8px",
             padding: "20px",
             boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-           
           }}
         >
           <Avatar
@@ -117,6 +129,7 @@ export default function SignIn() {
               </Grid>
               <Grid item></Grid>
             </Grid>
+          </Box>
           </Box>
         </Box>
     </ThemeProvider>

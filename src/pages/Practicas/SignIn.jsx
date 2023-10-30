@@ -24,7 +24,7 @@ function SignIn() {
           flexDirection: "column",
         }}
       >
-        <Paper elevation={24} sx={{ width: '100%', padding: 5 }}>
+        <Paper elevation={24} sx={{ width: '80%', padding: 5 }}>
           <Grid container justifyContent="center" alignItems="center" spacing={2}>
             <Grid item xs={12}>
               <Typography
@@ -45,17 +45,21 @@ function SignIn() {
               <img
                 src="https://practicas.administracionpublica-uv.cl/imagenes/logo_sis_practicas.png"
                 alt="Logo Practicas Profesionales"
-                style={{ width: '100px', height: '100px' }} // Adjust the size as needed
+                style={{ 
+                  width: '300px', 
+                  height: '100px',
+                  transform: 'scale(0.8)', // Adjust the scale as needed
+                }} // Adjust the size as needed
               />
             </Grid>
-            <Grid item xs={12}>
-              <Typography sx={{ textAlign: "center" }}>
-                Bienvenido al sistema de prácticas de Administración Pública de la Universidad de Valparaíso. Para continuar, necesitas ingresar con tu cuenta. De no contar con una, puedes registrarte en nuestro sistema.
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <ButtonsSign />
-            </Grid>
+            <Grid item xs={10} sx={{ textAlign: "center", mb: 0, pb: 0 }}>
+            <Typography sx={{ textAlign: "center", mb: 0 }}>
+              Bienvenido al sistema de prácticas de Administración Pública de la Universidad de Valparaíso. Para continuar, necesitas ingresar con tu cuenta. De no contar con una, puedes registrarte en nuestro sistema.
+            </Typography>
+          </Grid>
+          <Grid item xs={10} sx={{ pt: 5, mt: 5 }}>
+            <ButtonsSign />
+          </Grid>
           </Grid>
         </Paper>
       </Box>
