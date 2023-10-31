@@ -29,7 +29,7 @@ function SignIn() {
           <Grid container justifyContent="center" alignItems="center" spacing={2}>
             <Grid item xs={12}>
               <Typography
-                variant={isMobile ? "h5" : "h3"}
+                variant={isMobile ? "h4" : "h3"}
                 component="h1"
                 sx={{
                   color: "black",
@@ -54,11 +54,11 @@ function SignIn() {
               />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center", mb: 0, pb: 0 }}>
-            <Typography  variant={isMobile ? "h5" : "h4"} sx={{ textAlign: "center", fontWeight: 300}}>
+            <Typography  variant={isMobile ? "h5" : "h5"} sx={{ textAlign: "center", fontWeight: 300}}>
               Bienvenido al sistema de prácticas de Administración Pública de la Universidad de Valparaíso. Para continuar, necesitas ingresar con tu cuenta. De no contar con una, puedes registrarte en nuestro sistema.
             </Typography>
           </Grid>
-          <Grid item xs={12} sx={{ pt: 1, mt: 1 }}>
+          <Grid item xs={12} sx={{ pt: 0, mt: 0 }}>
             <ButtonsSign />
           </Grid>
           </Grid>

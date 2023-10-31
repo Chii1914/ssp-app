@@ -29,8 +29,8 @@ export default function SignIn() {
         <Box sx={{ mb: 4 }}>
           <Button
             sx={{
-              width: isMobile ? '300px' : '400px',
-              height: isMobile ? '100px' : '150px',
+              width: isMobile ? '150px' : '250px',
+              height: isMobile ? '50px' : '100px',
               border: '3px solid #000000',
               borderRadius: '45px',
               transition: 'all 0.3s',
@@ -51,8 +51,8 @@ export default function SignIn() {
         <Box>
           <Button
             sx={{
-              width: isMobile ? '300px' : '400px',
-              height: isMobile ? '100px' : '150px',
+              width: isMobile ? '150px' : '250px',
+              height: isMobile ? '50px' : '100px',
               border: '3px solid #000000',
               borderRadius: '45px',
               transition: 'all 0.3s',
