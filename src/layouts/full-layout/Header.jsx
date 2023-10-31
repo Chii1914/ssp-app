@@ -31,18 +31,18 @@ function Header() {
 
   const handleCloseNavMenu = (path) => () => {
     setAnchorElNav(null);
-    if (path === "/categorias") window.location.href = "https://administracionpublica-uv.cl/beta/";
+    if (path === "/categorias") window.location.href = "https://publica.uv.cl/";
     navigate(path);
   };  
 
   const navToHome = () => {
-    window.location.href = "https://administracionpublica-uv.cl/beta/";
+    window.location.href = "https://publica.uv.cl/";
   }
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#043C5C" }}>
-      <Container maxWidth="xl" sx={{ backgroundColor: "#043C5C" }}>
-        <Toolbar disableGutters sx={{ backgroundColor: "#043C5C" }}>
+    <AppBar position="static" sx={{ backgroundColor: "#003c58" }}>
+      <Container maxWidth="xl" sx={{ backgroundColor: "#003c58" }}>
+        <Toolbar disableGutters sx={{ backgroundColor: "#003c58" }}>
           <Box sx={{ flexGrow: 1, justifyContent: 'center',  cursor: 'pointer' }}>
             <Tooltip title="Volver a Administración Pública">
             <img

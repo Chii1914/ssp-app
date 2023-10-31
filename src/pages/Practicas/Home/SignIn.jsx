@@ -1,7 +1,8 @@
 import React from "react";
-import PageContainer from "../../components/container/PageContainer";
+import PageContainer from "../../../components/container/PageContainer";
 import { Box, Typography, Paper, Grid, useTheme, useMediaQuery } from "@mui/material";
 import ButtonsSign from "./Components/ButtonsLog";
+import backgroundImage from "./Components/Background.jpg";
 
 function SignIn() {
   const theme = useTheme();
@@ -15,7 +16,7 @@ function SignIn() {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          backgroundImage: 'url(https://cdn.discordapp.com/attachments/1145537724644864134/1166227278720671775/image.png?ex=6549b8ca&is=653743ca&hm=fe863285f7e6c37ea2b2c8d499f3f9b9d7b92f615ef8f34692dd7c81586a0dec&)',
+          backgroundImage:`url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
@@ -24,7 +25,7 @@ function SignIn() {
           flexDirection: "column",
         }}
       >
-        <Paper elevation={24} sx={{ width: '80%', padding: 5 }}>
+        <Box sx={{ padding: 5,   backgroundColor: 'rgba(255, 255, 255, 0.9)',  borderRadius: 4 }}>
           <Grid container justifyContent="center" alignItems="center" spacing={2}>
             <Grid item xs={12}>
               <Typography
@@ -34,7 +35,7 @@ function SignIn() {
                   color: "black",
                   fontFamily: "monospace",
                   fontWeight: 700,
-                  letterSpacing: ".3rem",
+               
                   textAlign: "center",
                 }}
               >
@@ -46,22 +47,22 @@ function SignIn() {
                 src="https://practicas.administracionpublica-uv.cl/imagenes/logo_sis_practicas.png"
                 alt="Logo Practicas Profesionales"
                 style={{ 
-                  width: '300px', 
+                  width: '350px', 
                   height: '100px',
                   transform: 'scale(0.8)', // Adjust the scale as needed
                 }} // Adjust the size as needed
               />
             </Grid>
-            <Grid item xs={10} sx={{ textAlign: "center", mb: 0, pb: 0 }}>
-            <Typography sx={{ textAlign: "center", mb: 0 }}>
+            <Grid item xs={12} sx={{ textAlign: "center", mb: 0, pb: 0 }}>
+            <Typography  variant={isMobile ? "h5" : "h4"} sx={{ textAlign: "center", fontWeight: 300}}>
               Bienvenido al sistema de prácticas de Administración Pública de la Universidad de Valparaíso. Para continuar, necesitas ingresar con tu cuenta. De no contar con una, puedes registrarte en nuestro sistema.
             </Typography>
           </Grid>
-          <Grid item xs={10} sx={{ pt: 5, mt: 5 }}>
+          <Grid item xs={12} sx={{ pt: 1, mt: 1 }}>
             <ButtonsSign />
           </Grid>
           </Grid>
-        </Paper>
+        </Box>
       </Box>
     </PageContainer>
   );

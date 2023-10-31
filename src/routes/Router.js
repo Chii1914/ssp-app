@@ -12,7 +12,7 @@ const FullLayout = Loadable(
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
 
 /* ****Pages***** */
-const SingIn = Loadable(lazy(() => import("../pages/Practicas/SignIn")));
+const SingIn = Loadable(lazy(() => import("../pages/Practicas/Home/SignIn")));
 const Deudas = Loadable(lazy(() => import("../pages/Deudas/Deudas")));
 const Eventos = Loadable(lazy(() => import("../pages/Eventos/Eventos")));
 const Categorias = Loadable(
@@ -21,6 +21,7 @@ const Categorias = Loadable(
 const Recintos = Loadable(lazy(() => import("../pages/Recintos/Recintos")));
 const Register = Loadable(lazy(() => import("../pages/Register/Register")));
 const Login = Loadable(lazy(() => import("../pages/Login/Login")));
+const Cartaspost = Loadable(lazy(() => import("../pages/Practicas/Gen/CartasyPost")));
 
 /* ****Routes***** */
 
@@ -38,6 +39,7 @@ const Router = [
       { path: "recintos", exact: true, element: <Recintos /> },
       { path: "login", exact: true, element: <Login /> },
       { path: "registro", exact: true, element: <Register /> },
+      { path: "cartaspost", exact: true, element: <Cartaspost />}
     ],
   },
 ];

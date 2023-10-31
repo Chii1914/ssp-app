@@ -17,7 +17,7 @@ import {
     return (
       <Box
         sx={{
-          bgcolor: '#043C5C',
+          bgcolor: '#003c58',
           color: "white",
           mt: 0,
           width: "100%",
@@ -25,7 +25,7 @@ import {
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ bgcolor: "#043C5C" }}>
+          <Toolbar sx={{ bgcolor: "#003c58" }}>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {footerLinks.map((link) => (
                 <Button
