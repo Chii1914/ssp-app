@@ -47,7 +47,7 @@ function Header() {
             <Tooltip title="Volver a Administración Pública">
             <img
               alt="Remy Sharp"
-              src="https://administracionpublica-uv.cl/beta/images/logo_ba2.png"
+              src="https://publica.uv.cl/templates/yootheme/cache/0b/APU-UV-0b6753bd.webp"
               style={{ width: '140px', height: '40px' }} // Set the size as needed
               onClick={navToHome}
             />

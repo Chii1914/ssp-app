@@ -4,7 +4,7 @@ import { Box, Typography, Paper, Grid, useTheme, useMediaQuery } from "@mui/mate
 import ButtonsSign from "./Components/ButtonsLog";
 import backgroundImage from "./Components/Background.jpg";
 
-function SignIn() {
+function Inicio() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -68,4 +68,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default Inicio;
