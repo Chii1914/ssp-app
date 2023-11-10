@@ -19,7 +19,7 @@ import { Routes, Route, useNavigate, Link } from "react-router-dom";
 function Header() {
   const pages = [
     { name: "Inicio", path: "/" },
-    { name: "Volver a APU", path: "/categorias" },
+    { name: "Volver a APU", path: "/apu" },
   ];
 
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ function Header() {
 
   const handleCloseNavMenu = (path) => () => {
     setAnchorElNav(null);
-    if (path === "/categorias") window.location.href = "https://publica.uv.cl/";
+    if (path === "/apu") window.location.href = "https://publica.uv.cl/";
     navigate(path);
   };  
 

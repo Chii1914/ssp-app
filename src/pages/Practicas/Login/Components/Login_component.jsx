@@ -12,6 +12,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { Icon } from "@mui/material";
+import ReplyIcon from '@mui/icons-material/Reply';
+import { Reply } from "@mui/icons-material";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -31,6 +34,7 @@ export default function SignIn() {
       
       if (res.data.status === true) {
         alert("Bienvenido ");
+        <link rel="stylesheet" href="/cartaspost" />
         
       }else if(res.data.message === "Usuario no encontrado"){
         alert("Usuario no encontrado")
@@ -60,7 +64,7 @@ export default function SignIn() {
         <Box
           sx={{
             width: "500px",
-            height: "400px",
+            height: "350px",
             backgroundColor: "white",
             border: "1px solid gray",
             borderRadius: "8px",
@@ -100,22 +104,21 @@ export default function SignIn() {
               autoComplete="current-password"
               onChange={handleChange}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Recuérdame"
-            />
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              
             >
               Ingresar
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Olvidaste tu contraseña?
+                <ReplyIcon sx={{color: 'primary'}} />
+                <Link href="/">
+                  Volver
                 </Link>
               </Grid>
               <Grid item></Grid>

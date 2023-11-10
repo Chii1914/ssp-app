@@ -17,9 +17,9 @@ const Deudas = Loadable(lazy(() => import("../pages/Deudas/Deudas")));
 const Eventos = Loadable(lazy(() => import("../pages/Eventos/Eventos")));
 const Categorias = Loadable(lazy(() => import("../pages/Categorias/Categorias")));
 const Recintos = Loadable(lazy(() => import("../pages/Recintos/Recintos")));
-const Register = Loadable(lazy(() => import("../pages/Register/Register")));
 const Login = Loadable(lazy(() => import("../pages/Login/Login")));
 
+const Register = Loadable(lazy(() => import("../pages/Practicas/Register/Register")));
 const Cartaspost = Loadable(lazy(() => import("../pages/Practicas/Gen/CartasyPost")));
 const Inicio = Loadable(lazy(() => import("../pages/Practicas/Home/Inicio")));
 const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/Login/Login")));
@@ -39,7 +39,8 @@ const Router = [
       { path: "*", element: <Navigate to="/404" /> },
       { path: "404", element: <Error /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
-      { path: "cartaspost", exact: true, element: <Cartaspost />}
+      { path: "cartaspost", exact: true, element: <Cartaspost />},
+      { path: "registro", exact: true, element: <Register />}
     ],
   },
 ];
