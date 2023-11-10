@@ -17,7 +17,7 @@ import React, { useState } from "react";
               import CssBaseline from "@mui/material/CssBaseline";
               import axios from "axios";
 
-              import BackgroundLocal from './Images/Evento_r.jpg';
+              import BackgroundLocal from './Images/valpoback.jpg';
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
@@ -104,9 +104,9 @@ export default function SignInSide() {
                 <Typography variant="body1">El usuario {inputs.nombre_completo} ya está registrado, o ocurrió un error.</Typography>
               </DialogContent>
             </Dialog>
-            <Avatar alt="Custom Avatar" src={url} />
+           
             <Typography component="h1" variant="h5">
-              Registrar usuario
+              Datos del Alumno
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -114,7 +114,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="RUN"
-                label="Rut del Usuario"
+                label="Ingrese su primer nombre"
                 name="RUN"
                 autoComplete="username"
                 autoFocus
@@ -125,7 +125,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="direccion_completa"
-                label="Dirección completa del usuario"
+                label="Ingrese su segundo nombre"
                 type="text"
                 id="direccion_completa"
                 onChange={handleChange}
@@ -135,7 +135,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="telefono_emergencia"
-                label="Teléfono de emergencia del usuario"
+                label="Ingrese su primer apellido"
                 type="text"
                 id="telefono_emergencia"
                 onChange={handleChange}
@@ -145,16 +145,37 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="nombre_completo"
-                label="Nombre completo del usuario"
+                label="Ingrese su segundo apellido"
                 type="text"
                 id="nombre_completo"
                 onChange={handleChange}
               />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="nombre_completo"
+                label="Ingrese su rut sin puntos ni guión"
+                type="text"
+                id="nombre_completo"
+                onChange={handleChange}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="nombre_completo"
+                label="Ingrese su correo institucional"
+                type="text"
+                id="nombre_completo"
+                onChange={handleChange}
+              />
+    
 
               <Box>
                   <Grid container spacing={3}> {/* Wrapper Grid container */}
                       <Grid item xs={6}> {/* First Grid item */}
-                          <InputLabel id="rol">Rol del usuario</InputLabel>
+                          <InputLabel id="df">Dígito Verificador</InputLabel>
                           <Select
                               labelId="rol"
                               id="rol"
@@ -163,13 +184,22 @@ export default function SignInSide() {
                               value={inputs.rol}
                               onChange={handleChange}
                           >
-                              <MenuItem value={"Jugador"}>Jugador</MenuItem>
-                              <MenuItem value={"Administrador"}>Administrador</MenuItem>
+                              <MenuItem value={"0"}>0</MenuItem>
+                              <MenuItem value={"1"}>1</MenuItem>
+                              <MenuItem value={"2"}>2</MenuItem>
+                              <MenuItem value={"3"}>3</MenuItem>
+                              <MenuItem value={"4"}>4</MenuItem>
+                              <MenuItem value={"5"}>5</MenuItem>
+                              <MenuItem value={"6"}>6</MenuItem>
+                              <MenuItem value={"7"}>7</MenuItem>
+                              <MenuItem value={"8"}>8</MenuItem>
+                              <MenuItem value={"9"}>9</MenuItem>
+                              <MenuItem value={"k"}>k</MenuItem>
                           </Select>
                       </Grid>
 
                       <Grid item xs={6}> {/* Second Grid item */}
-                          <InputLabel id="categoria">Categoría del jugador</InputLabel>
+                          <InputLabel id="genero">Sexo</InputLabel>
                           <Select
                               labelId="categoria"
                               id="categoria"
@@ -178,17 +208,37 @@ export default function SignInSide() {
                               value={inputs.categoria}
                               onChange={handleChange}
                           >
-                              <MenuItem value={"alevin"}>Alevin</MenuItem>
-                              <MenuItem value={"mini_femenino"}>Mini femenino</MenuItem>
-                              <MenuItem value={"mini_masculino"}>Mini masculino</MenuItem>
-                              <MenuItem value={"infantil_femenino"}>Infantil femenino</MenuItem>
-                              <MenuItem value={"infantil_masculino"}>Infantil masculino</MenuItem>
-                              <MenuItem value={"cadete_femenino"}>Cadete femenino</MenuItem>
-                              <MenuItem value={"cadete_masculino"}>Cadete masculino</MenuItem>
-                              <MenuItem value={"juvenil_femenino"}>Juvenil femenino</MenuItem>
-                              <MenuItem value={"juvenil_masculino"}>Juvenil masculino</MenuItem>
-                              <MenuItem value={"adulto_femenino"}>Adulto femenino</MenuItem>
-                              <MenuItem value={"adulto_masculino"}>Adulto masculino</MenuItem>
+                              <MenuItem value={"M"}>Mujer</MenuItem>
+                              <MenuItem value={"H"}>Hombre</MenuItem>
+                          </Select>
+                      </Grid>
+
+                      <Grid item xs={6}> {/* Second Grid item */}
+                          <InputLabel id="Sede">Sede</InputLabel>
+                          <Select
+                              labelId="categoria"
+                              id="categoria"
+                              label="categoria"
+                              name="categoria"
+                              value={inputs.categoria}
+                              onChange={handleChange}
+                          >
+                              <MenuItem value={"V"}>Valparaíso</MenuItem>
+                              <MenuItem value={"S"}>Santiago</MenuItem>
+                          </Select>
+                      </Grid>
+                      <Grid item xs={6}> {/* Second Grid item */}
+                          <InputLabel id="agno">Año de Ingreso</InputLabel>
+                          <Select
+                              labelId="categoria"
+                              id="categoria"
+                              label="categoria"
+                              name="categoria"
+                              value={inputs.categoria}
+                              onChange={handleChange}
+                          >
+                              <MenuItem value={"8"}>2008</MenuItem>
+                              <MenuItem value={"H"}>2023</MenuItem>
                           </Select>
                       </Grid>
                   </Grid>
@@ -198,7 +248,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="telefono"
-                label="Teléfono asociado al usuario"
+                label="Correo personal"
                 type="text"
                 id="telefono"
                 onChange={handleChange}

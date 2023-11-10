@@ -7,6 +7,10 @@ const FullLayout = Loadable(
   lazy(() => import("../layouts/full-layout/MainLayout"))
 );
 
+const SecondLayout = Loadable(
+  lazy(() => import("../layouts/full-layout/SecondLayout"))
+);
+
 /* ***End Layouts**** */
 
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
@@ -40,9 +44,15 @@ const Router = [
       { path: "404", element: <Error /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
       { path: "cartaspost", exact: true, element: <Cartaspost />},
-      { path: "registro", exact: true, element: <Register />}
     ],
   },
+  {
+    path: "/",
+    element: <SecondLayout />,
+    children:[
+      {path: "registro", exact: true, element: <Register />},
+    ]
+  }
 ];
 
 export default Router;

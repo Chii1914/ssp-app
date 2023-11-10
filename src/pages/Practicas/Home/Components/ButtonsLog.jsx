@@ -71,7 +71,7 @@ export default function SignIn() {
               },
             }}
             component={Link}
-            to={"/iniciar_sesion"}
+            to={"/registro"}
           >
             Registrarse
           </Button>
