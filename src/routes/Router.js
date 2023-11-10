@@ -22,12 +22,13 @@ const Login = Loadable(lazy(() => import("../pages/Login/Login")));
 
 const Cartaspost = Loadable(lazy(() => import("../pages/Practicas/Gen/CartasyPost")));
 const Inicio = Loadable(lazy(() => import("../pages/Practicas/Home/Inicio")));
-const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/SignIn/SignIn")));
+const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/Login/Login")));
 /* ****Routes***** */
 
 //Páginas trabajadas:
 //Cartas y postulaciones (Cartaspost)
-//Inico (SignIn)
+//Inico
+//Inicio Sesión 1/2 (InicioSesion)
 
 const Router = [
   {
