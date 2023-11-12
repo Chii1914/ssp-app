@@ -1,20 +1,14 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { Icon } from "@mui/material";
-import ReplyIcon from '@mui/icons-material/Reply';
-import { Reply } from "@mui/icons-material";
+import ReplyIcon from "@mui/icons-material/Reply";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -31,23 +25,22 @@ export default function SignIn() {
     e.preventDefault();
     try {
       const res = await axios.post("/userver/", inputs);
-      
+
       if (res.data.status === true) {
         alert("Bienvenido ");
-        <link rel="stylesheet" href="/cartaspost" />
-        
-      }else if(res.data.message === "Usuario no encontrado"){
-        alert("Usuario no encontrado")
-      }else if(res.data.message === "Contraseña incorrecta"){
-        alert("Contraseña incorrecta")
+        <link rel="stylesheet" href="/cartaspost" />;
+      } else if (res.data.message === "Usuario no encontrado") {
+        alert("Usuario no encontrado");
+      } else if (res.data.message === "Contraseña incorrecta") {
+        alert("Contraseña incorrecta");
       }
     } catch (error) {
       console.error("Error al hacer la petición:", error.response.data);
       // Aquí puedes establecer algún estado o mostrar un mensaje al usuario
-  }
+    }
   };
 
- return (
+  return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <Box
@@ -72,7 +65,6 @@ export default function SignIn() {
             boxShadow: "0px 0px 10px rgba(0,0,0,0.9)",
           }}
         >
-          
           <Typography component="h1" variant="h5">
             Inicio de sesión
           </Typography>
@@ -104,22 +96,19 @@ export default function SignIn() {
               autoComplete="current-password"
               onChange={handleChange}
             />
-            
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              
             >
               Ingresar
             </Button>
             <Grid container>
               <Grid item xs>
-                <ReplyIcon sx={{color: 'primary'}} />
-                <Link href="/">
-                  Volver
-                </Link>
+                <ReplyIcon sx={{ color: "primary" }} />
+                <Link href="/">Volver</Link>
               </Grid>
               <Grid item></Grid>
             </Grid>
