@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -19,7 +18,6 @@ import axios from "axios";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 
 import BackgroundLocal from "./Images/valpoback.jpg";
@@ -118,8 +116,11 @@ export default function SignInSide() {
               </DialogContent>
             </Dialog>
 
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h4" sx={{mb: "10px"}}>
               Datos del Alumno
+            </Typography>
+            <Typography component="h2" variant="h5">
+              Ingrese sus datos con prudencia, luego estos serán usados para la generación de sus documentos. 
             </Typography>
             <Box
               component="form"
@@ -297,23 +298,13 @@ export default function SignInSide() {
                 id="correo_personal"
                 onChange={handleChange}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Contraseña asignada al usuario"
-                type="password"
-                id="password"
-                onChange={handleChange}
-              />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Registrar persona
+                Registrarse
               </Button>
             </Box>
           </Box>

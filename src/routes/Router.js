@@ -33,6 +33,7 @@ const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/Login/Login"
 //Cartas y postulaciones (Cartaspost)
 //Inico
 //Inicio Sesión 1/2 (InicioSesion)
+//Registro 
 
 const Router = [
   {
@@ -42,15 +43,15 @@ const Router = [
       { path: "", exact: true, element: <Inicio /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "404", element: <Error /> },
-      { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
       { path: "cartaspost", exact: true, element: <Cartaspost />},
     ],
   },
   {
-    path: "/",
+    path: "/",  //Second layout-> Full Layout pero sin router
     element: <SecondLayout />,
     children:[
       {path: "registro", exact: true, element: <Register />},
+      { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
     ]
   }
 ];

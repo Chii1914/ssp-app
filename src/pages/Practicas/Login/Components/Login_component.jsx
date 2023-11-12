@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import ReplyIcon from "@mui/icons-material/Reply";
+import BackgroundLocal from "./Back.jpg";
+import { useNavigate } from 'react-router-dom';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -21,14 +23,18 @@ export default function SignIn() {
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    navigate("/cartaspost");
+      /*
     try {
       const res = await axios.post("/userver/", inputs);
 
       if (res.data.status === true) {
         alert("Bienvenido ");
-        <link rel="stylesheet" href="/cartaspost" />;
       } else if (res.data.message === "Usuario no encontrado") {
         alert("Usuario no encontrado");
       } else if (res.data.message === "Contraseña incorrecta") {
@@ -38,6 +44,7 @@ export default function SignIn() {
       console.error("Error al hacer la petición:", error.response.data);
       // Aquí puedes establecer algún estado o mostrar un mensaje al usuario
     }
+    */
   };
 
   return (
@@ -45,7 +52,7 @@ export default function SignIn() {
       <CssBaseline />
       <Box
         sx={{
-          backgroundColor: "#002E38",
+          backgroundImage: `url(${BackgroundLocal})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           minHeight: "100vh",
