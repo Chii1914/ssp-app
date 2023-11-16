@@ -16,17 +16,13 @@ const SecondLayout = Loadable(
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
 
 /* ****Pages***** */
-
-const Deudas = Loadable(lazy(() => import("../pages/Deudas/Deudas")));
-const Eventos = Loadable(lazy(() => import("../pages/Eventos/Eventos")));
-const Categorias = Loadable(lazy(() => import("../pages/Categorias/Categorias")));
-const Recintos = Loadable(lazy(() => import("../pages/Recintos/Recintos")));
-const Login = Loadable(lazy(() => import("../pages/Login/Login")));
-
+//Prácticas
 const Register = Loadable(lazy(() => import("../pages/Practicas/Register/Register")));
 const Cartaspost = Loadable(lazy(() => import("../pages/Practicas/Gen/CartasyPost")));
 const Inicio = Loadable(lazy(() => import("../pages/Practicas/Home/Inicio")));
 const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/Login/Login")));
+//Coordinador
+const Inicocoord = Loadable(lazy(() => import("../pages/Coordinador/Login/Login")));
 /* ****Routes***** */
 
 //Páginas trabajadas:
@@ -47,10 +43,18 @@ const Router = [
     ],
   },
   {
-    path: "/",  //Second layout-> Full Layout pero sin router
+    path: "/",  //Second layout-> Full Layout pero sin footer
     element: <SecondLayout />,
     children:[
       {path: "registro", exact: true, element: <Register />},
+      { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
+    ]
+  },
+  {
+    path: "/coord/",  //Second layout-> Full Layout pero sin footer
+    element: <SecondLayout />,
+    children:[
+      {path: "", exact: true, element: <Inicocoord />},
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
     ]
   }
