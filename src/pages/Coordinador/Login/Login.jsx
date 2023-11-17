@@ -1,56 +1,178 @@
-import React from 'react'
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
+// TODO remove, this demo shouldn't need to reset the theme.
 
-import LockOutlinedIcon from '@mui/material/LockOutlinedIcon';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+const defaultTheme = createTheme();
+export default function SignIn() {
 
+  /*google*/
 
-
-const Login = () =>{
-
-    const paperStyle={padding :20,height:'70vh',width:280, margin:"20px auto"}
-    const avatarStyle={backgroundColor:'#1bbd7e'}
-    const btnstyle={margin:'8px 0'}
-    return(
-        <Grid>
-            <Paper elevation={10} style={paperStyle}>
-                <Grid align='center'>
-                     <Avatar style={avatarStyle}><LockOutlinedIcon/></Avatar>
-                    <h2>Sign In</h2>
-                </Grid>
-                <TextField label='Username' placeholder='Enter username' variant="outlined" fullWidth required/>
-                <TextField label='Password' placeholder='Enter password' type='password' variant="outlined" fullWidth required/>
-                <FormControlLabel
-                    control={
-                    <Checkbox
-                        name="checkedB"
-                        color="primary"
-                    />
-                    }
-                    label="Remember me"
-                 />
-                <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth>Sign in</Button>
-                <Typography >
-                     <Link href="#" >
-                        Forgot password ?
-                </Link>
-                </Typography>
-                <Typography > Do you have an account ?
-                     <Link href="#" >
-                        Sign Up 
-                </Link>
-                </Typography>
-            </Paper>
-        </Grid>
+  function handleCallbackRespone(response) {
+    console.log("token: ", response.credential)
+    var UserObject = jwtDecode(response.credential)
+    console.log(UserObject)
+  }
+  useEffect(() => {
+    google.accounts.id.initialize({
+      client_id: "417041141509-495v48nc29snmejlojgaj49pq8ck3ukn.apps.googleusercontent.com",
+      callback: handleCallbackRespone
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("signIn"),
+      {theme: "outline", size: "large"}
     )
+
+  }, []);
+
+
+  const [inputs, setInputs] = useState({
+    RUN: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("/userver/", inputs);
+      console.log(res)
+      if (res.data.status === true) {
+        alert("Bienvenido ");
+        
+      }else if(res.data.message === "Usuario no existente"){
+        alert("Usuario no encontrado")
+      }else if(res.data.message === "Contraseña incorrecta"){
+        alert("Contraseña incorrecta")
+      }
+    } catch (error) {
+      console.error("Error al hacer la petición:", error.response.data);
+      // Aquí puedes establecer algún estado o mostrar un mensaje al usuario
+  }
+  };
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          backgroundImage: `url('https://as2.ftcdn.net/v2/jpg/03/11/72/63/1000_F_311726370_WUopUflJYzZWTiIPdnP2yZ3xGaNABHZY.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: "500px",
+            height: "450px",
+            backgroundColor: "white",
+            border: "1px solid gray",
+            borderRadius: "8px",
+            padding: "30px",
+            boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          
+          <Typography component="h1" variant="h5" sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            
+          }}>
+            Coordinadore SSP-APU
+          </Typography>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="RUN"
+              label="Ingresa tu Rut sin puntos ni guión"
+              name="RUN"
+              autoComplete="RUN"
+              autoFocus
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={handleChange}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Recuérdame"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 4 }}
+            >
+              Ingresar
+            </Button>
+            <Box
+              id="signIn"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                
+              }}
+            >
+              <Button fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
+                Ingresar con google
+              </Button>
+            </Box>
+           
+          </Box>
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
 }
 
-export default Login
+/*
+<Box
+              id="signIn"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                
+              }}
+            >
+              <Button fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                Ingresar con google
+              </Button>
+            </Box>
+*/
+

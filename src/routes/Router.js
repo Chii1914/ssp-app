@@ -48,14 +48,17 @@ const Router = [
     children:[
       {path: "registro", exact: true, element: <Register />},
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
+      { path: "*", element: <Navigate to="/404" /> },
     ]
   },
   {
-    path: "/coord/",  //Second layout-> Full Layout pero sin footer
-    element: <SecondLayout />,
+    path: "/coord",  //Second layout-> Full Layout pero sin footer
+    element: null,
     children:[
       {path: "", exact: true, element: <Inicocoord />},
+      { path: "*", element: <Navigate to="/404" /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
+      
     ]
   }
 ];
