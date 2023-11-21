@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import PageContainer from "../../../components/container/PageContainer";
+import { useNavigate } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -38,6 +40,7 @@ export default function SignIn() {
 
   }, []);
 
+  const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
     RUN: "",
@@ -48,6 +51,7 @@ export default function SignIn() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    navigate("/coord/dboard")
     try {
       const res = await axios.post("/userver/", inputs);
       console.log(res)
@@ -66,11 +70,15 @@ export default function SignIn() {
   };
 
   return (
+    <PageContainer
+      title="Coordinadores SSP-APU | Administración Pública"
+      description="Sistema de prácticas profesionales"
+    >
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <Box
         sx={{
-          backgroundImage: `url('https://as2.ftcdn.net/v2/jpg/03/11/72/63/1000_F_311726370_WUopUflJYzZWTiIPdnP2yZ3xGaNABHZY.jpg')`,
+          backgroundImage: `url('https://i.imgur.com/NdyWLVr.jpeg')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           minHeight: "100vh",
@@ -110,7 +118,7 @@ export default function SignIn() {
               required
               fullWidth
               id="RUN"
-              label="Ingresa tu Rut sin puntos ni guión"
+              label="Usuario"
               name="RUN"
               autoComplete="RUN"
               autoFocus
@@ -157,6 +165,7 @@ export default function SignIn() {
         </Box>
       </Box>
     </ThemeProvider>
+    </PageContainer>
   );
 }
 

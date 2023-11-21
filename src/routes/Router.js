@@ -10,26 +10,36 @@ const FullLayout = Loadable(
 const SecondLayout = Loadable(
   lazy(() => import("../layouts/full-layout/SecondLayout"))
 );
-
 /* ***End Layouts**** */
 
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
 
 /* ****Pages***** */
 //Prácticas
-const Register = Loadable(lazy(() => import("../pages/Practicas/Register/Register")));
-const Cartaspost = Loadable(lazy(() => import("../pages/Practicas/Gen/CartasyPost")));
+const Register = Loadable(
+  lazy(() => import("../pages/Practicas/Register/Register"))
+);
+const Cartaspost = Loadable(
+  lazy(() => import("../pages/Practicas/Gen/CartasyPost"))
+);
 const Inicio = Loadable(lazy(() => import("../pages/Practicas/Home/Inicio")));
-const InicioSesion = Loadable(lazy(() => import("../pages/Practicas/Login/Login")));
+const InicioSesion = Loadable(
+  lazy(() => import("../pages/Practicas/Login/Login"))
+);
 //Coordinador
-const Inicocoord = Loadable(lazy(() => import("../pages/Coordinador/Login/Login")));
+const Inicocoord = Loadable(
+  lazy(() => import("../pages/Coordinador/Login/Login"))
+);
+const Dashboard = Loadable(
+  lazy(() => import("../pages/Coordinador/Dashboard/Dashboard"))
+);
 /* ****Routes***** */
 
 //Páginas trabajadas:
 //Cartas y postulaciones (Cartaspost)
 //Inico
 //Inicio Sesión 1/2 (InicioSesion)
-//Registro 
+//Registro
 
 const Router = [
   {
@@ -39,28 +49,29 @@ const Router = [
       { path: "", exact: true, element: <Inicio /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "404", element: <Error /> },
-      { path: "cartaspost", exact: true, element: <Cartaspost />},
+      { path: "cartaspost", exact: true, element: <Cartaspost /> },
     ],
   },
   {
-    path: "/",  //Second layout-> Full Layout pero sin footer
+    path: "/", //Second layout-> Full Layout pero sin footer
     element: <SecondLayout />,
-    children:[
-      {path: "registro", exact: true, element: <Register />},
+    children: [
+      { path: "registro", exact: true, element: <Register /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
       { path: "*", element: <Navigate to="/404" /> },
-    ]
+    ],
   },
   {
-    path: "/coord",  //Second layout-> Full Layout pero sin footer
+    path: "/coord", //Second layout-> Full Layout pero sin footer
     element: null,
-    children:[
-      {path: "", exact: true, element: <Inicocoord />},
+    children: [
+      { path: "", exact: true, element: <Inicocoord /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
-      
-    ]
-  }
+      { path: "dboard", exact: true, element: <Dashboard /> },
+    ],
+  },
+ 
 ];
-
+// <NavBar />
 export default Router;
