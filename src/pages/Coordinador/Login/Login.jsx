@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 const defaultTheme = createTheme();
 export default function SignIn() {
 
-  /*google*/
+  /*global google*/
 
   function handleCallbackRespone(response) {
     console.log("token: ", response.credential)
@@ -51,7 +51,7 @@ export default function SignIn() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/coord/dboard")
+    navigate("/coord/practicas")
     try {
       const res = await axios.post("/userver/", inputs);
       console.log(res)

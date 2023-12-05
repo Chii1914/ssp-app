@@ -10,6 +10,8 @@ const FullLayout = Loadable(
 const SecondLayout = Loadable(
   lazy(() => import("../layouts/full-layout/SecondLayout"))
 );
+
+const Navbar = Loadable(lazy(() => import("../components/Navbar/Navbar")));
 /* ***End Layouts**** */
 
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
@@ -31,7 +33,19 @@ const Inicocoord = Loadable(
   lazy(() => import("../pages/Coordinador/Login/Login"))
 );
 const Dashboard = Loadable(
-  lazy(() => import("../pages/Coordinador/Dashboard/Dashboard"))
+  lazy(() => import("../pages/Coordinador/Dashboard/Sections/Dashboard"))
+);
+const Postulaciones = Loadable(
+  lazy(() => import("../pages/Coordinador/Dashboard/Sections/Postulaciones"))
+);
+const Cartas = Loadable(
+  lazy(() => import("../pages/Coordinador/Dashboard/Sections/Cartas"))
+);
+const Settings = Loadable(
+  lazy(() => import("../pages/Coordinador/Dashboard/Sections/Settings"))
+);
+const Reportes = Loadable(
+  lazy(() => import("../pages/Coordinador/Dashboard/Sections/Reportes"))
 );
 /* ****Routes***** */
 
@@ -68,10 +82,20 @@ const Router = [
       { path: "", exact: true, element: <Inicocoord /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
-      { path: "dboard", exact: true, element: <Dashboard /> },
     ],
   },
- 
+  {
+    path: "/coord/practicas", //Second layout-> Full Layout pero sin footer
+    element: null,
+    children: [
+      { path: "", exact: true, element: <Dashboard /> },
+      { path: "*", element: <Navigate to="/404" /> },
+      { path: "postulaciones", exact: true, element: <Postulaciones /> },
+      { path: "cartas", exact: true, element: <Cartas />},
+      { path: "settings", exact: true, element: <Settings />},
+      { path: "reportes", exact: true, element: <Reportes />}
+    ],
+  },
 ];
 // <NavBar />
 export default Router;
