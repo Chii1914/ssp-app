@@ -72,8 +72,7 @@ function Postulaciones() {
               </Box>
             </Card>
           </Box>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {/* Conditionally render the table */}
+          <Box sx={{ padding: 3}}>
             {activeTable === "postulaciones" && <Tablapostulaciones />}
             {activeTable === "evaluaciones" && <Tablaevaluaciones />}
           </Box>
