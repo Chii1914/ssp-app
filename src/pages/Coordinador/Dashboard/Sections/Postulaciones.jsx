@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -9,6 +9,13 @@ import Tablapostulaciones from "./Tables/Tablapostulaciones";
 import Tablaevaluaciones from "./Tables/Tablaevaluaciones";
 function Postulaciones() {
   const [activeTable, setActiveTable] = useState(null);
+  const [showTransition, setShowTransition] = useState(false);
+
+  useEffect(() => {
+    if (activeTable) {
+      setShowTransition(true);
+    }
+  }, [activeTable]);
 
   return (
     <>
@@ -25,7 +32,7 @@ function Postulaciones() {
                 }}
               >
                 <CardContent>
-                  <Typography variant="h5" sx={{ padding: 2 }}>
+                  <Typography variant="h3" sx={{ padding: 2 }}>
                     Postulaciones
                   </Typography>
                   <Typography variant="body2" sx={{ padding: 2 }}>
@@ -53,7 +60,7 @@ function Postulaciones() {
                 }}
               >
                 <CardContent>
-                  <Typography variant="h5" sx={{ padding: 2 }}>
+                  <Typography variant="h3" sx={{ padding: 2 }}>
                     Evaluaciones
                   </Typography>
                   <Typography variant="body2" sx={{ padding: 2 }}>
@@ -72,10 +79,17 @@ function Postulaciones() {
               </Box>
             </Card>
           </Box>
-          <Box sx={{ padding: 3}}>
-            {activeTable === "postulaciones" && <Tablapostulaciones />}
-            {activeTable === "evaluaciones" && <Tablaevaluaciones />}
-          </Box>
+          <Box sx={{ padding: 1 }}>
+        <Box
+          sx={{
+            opacity: showTransition ? 1 : 0,
+            transition: 'opacity 0.5s ease-in-out',
+          }}
+        >
+          {activeTable === "postulaciones" && <Tablapostulaciones />}
+          {activeTable === "evaluaciones" && <Tablaevaluaciones />}
+        </Box>
+      </Box>
         </Box>
       </Box>
     </>

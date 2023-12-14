@@ -2,9 +2,9 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import ArticleSharpIcon from '@mui/icons-material/ArticleSharp';
-import CheckBoxSharpIcon from '@mui/icons-material/CheckBoxSharp';
-import DisabledByDefaultSharpIcon from '@mui/icons-material/DisabledByDefaultSharp';
+import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
+import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
+import DisabledByDefaultSharpIcon from "@mui/icons-material/DisabledByDefaultSharp";
 import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
@@ -91,17 +91,7 @@ export default function Tablaevaluaciones() {
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
-  /*
-  id: randomId(),
-  run: "12345678-9",
-  nombre: "Jacinta ",
-  apellidop: "Mayo",
-  apellidom: "Perez",
-  fsolicitud: "Día 9-12-2023 \nHora 12:00",
-  factualizacion: "Día 13-12-2023 \nHora 13:00",
-  practica: "Segunda",
-  estado: "Sin acción",
-*/
+
   const columns = [
     { field: "run", headerName: "RUN", width: 180 },
     {
@@ -119,8 +109,8 @@ export default function Tablaevaluaciones() {
       headerAlign: "left",
     },
     {
-      field: "apellidop",
-      headerName: "A. Paterno",
+      field: "apellidom",
+      headerName: "A. Materno",
       width: 100,
       align: "left",
       headerAlign: "left",
@@ -170,13 +160,13 @@ export default function Tablaevaluaciones() {
             color="inherit"
           />,
           <GridActionsCellItem
-            icon={<CheckBoxSharpIcon sx={{color: "green"}} />}
+            icon={<CheckBoxSharpIcon sx={{ color: "green" }} />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
-            icon={<DisabledByDefaultSharpIcon sx={{color: "red"}} />}
+            icon={<DisabledByDefaultSharpIcon sx={{ color: "red" }} />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
@@ -185,7 +175,7 @@ export default function Tablaevaluaciones() {
       },
     },
   ];
-  
+
   return (
     <Box
       sx={{
@@ -199,6 +189,23 @@ export default function Tablaevaluaciones() {
         },
       }}
     >
+      <Box sx={{ display: "flex", padding: 2 }}>
+        <Button variant="contained" color="success" sx={{ mr: 2 }}>
+          Sin acción
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            mr: 2,
+            backgroundColor: "#86110e", // Replace with your custom color
+            "&:hover": {
+              backgroundColor: "#3f0605", // Replace with a darker shade for hover effect
+            },
+          }}
+        >
+          Rechazadas
+        </Button>
+      </Box>
       <DataGrid
         rows={rows}
         columns={columns}
