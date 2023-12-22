@@ -9,7 +9,7 @@ function Settings() {
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1> Panel de Control y estadísticas </h1>
+          <h1> Ajustes y estadísticas </h1>
           <Typography paragraph>Panel de control y estadísticas </Typography>
         </Box>
       </Box>
