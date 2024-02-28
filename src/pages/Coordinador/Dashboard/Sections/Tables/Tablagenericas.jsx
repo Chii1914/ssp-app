@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 export default function Tablagenericas({ region }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [reviewedStatus, setReviewedStatus] = useState(false); // Start with 'No Revisadas' by default
+  const [reviewedStatus, setReviewedStatus] = useState(false); 
 
   useEffect(() => {
     setLoading(true);
@@ -38,7 +38,7 @@ export default function Tablagenericas({ region }) {
     { field: 'fsolicitud', headerName: 'Fecha Solicitud', width: 180 },
     { field: 'factualizacion', headerName: 'Fecha Modificación', width: 180 },
     { field: 'revisado', headerName: 'Revisado', width: 120 },
-    // Add more columns as needed
+    
   ];
 
   return (
@@ -54,8 +54,8 @@ export default function Tablagenericas({ region }) {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'center', // This centers the buttons horizontally
-          gap: 2, // This adds space between the buttons
+          justifyContent: 'center', 
+          gap: 2, 
           padding: 2
         }}
       >
