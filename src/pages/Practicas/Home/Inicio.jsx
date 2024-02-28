@@ -1,7 +1,7 @@
+import SignIn from "../Login/Login"; // Actualiza esto con la ruta correcta al componente SignIn
 import React from "react";
 import PageContainer from "../../../components/container/PageContainer";
 import { Box, Typography, Grid, useTheme, useMediaQuery } from "@mui/material";
-import ButtonsSign from "./Components/ButtonsLog";
 import backgroundImage from "./Components/Background.jpg";
 
 function Inicio() {
@@ -50,7 +50,6 @@ function Inicio() {
                   color: "black",
                   fontFamily: "monospace",
                   fontWeight: 700,
-
                   textAlign: "center",
                 }}
               >
@@ -68,8 +67,8 @@ function Inicio() {
                 style={{
                   width: "350px",
                   height: "100px",
-                  transform: "scale(0.8)", // Adjust the scale as needed
-                }} // Adjust the size as needed
+                  transform: "scale(0.8)", // Ajusta la escala según sea necesario
+                }} // Ajusta el tamaño según sea necesario
               />
             </Grid>
             <Grid item xs={12} sx={{ textAlign: "center", mb: 0, pb: 0 }}>
@@ -83,8 +82,9 @@ function Inicio() {
                 nuestro sistema.
               </Typography>
             </Grid>
+            {/* Aquí se incluye el formulario de SignIn directamente */}
             <Grid item xs={12} sx={{ pt: 0, mt: 0 }}>
-              <ButtonsSign />
+              <SignIn />
             </Grid>
           </Grid>
         </Box>

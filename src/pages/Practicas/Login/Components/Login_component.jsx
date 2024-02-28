@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import ReplyIcon from "@mui/icons-material/Reply";
-import BackgroundLocal from "./Back.jpg";
+
 import { useNavigate } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -52,10 +52,10 @@ export default function SignIn() {
       <CssBaseline />
       <Box
         sx={{
-          backgroundImage: `url(${BackgroundLocal})`,
+          
           backgroundSize: "cover",
           backgroundPosition: "center",
-          minHeight: "100vh",
+          minHeight: "50vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
