@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { fetchLetters } from '../../../../../Services/LetterService';
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ReplayIcon from '@mui/icons-material/Replay';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { fetchLetters } from '../../../../../Services/LetterService';
+import axios from 'axios';
+
+const MySwal = withReactContent(Swal);
+const API_BASE_URL = 'http://localhost:3000/api/cartas-gen';
 
 export default function Tablagenericas({ region }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [reviewedStatus, setReviewedStatus] = useState(false); 
+  const [reviewedStatus, setReviewedStatus] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -21,7 +33,7 @@ export default function Tablagenericas({ region }) {
           apellidom: item.estudiante.apellidoMaterno,
           fsolicitud: new Date(item.fechaCreado).toLocaleString(),
           factualizacion: new Date(item.fechaActualizacion).toLocaleString(),
-          revisado: item.revisado ? 'Revisado' : 'No revisado',
+          revisado: item.revisado,
         })));
       })
       .catch(error => {
@@ -30,7 +42,45 @@ export default function Tablagenericas({ region }) {
       .finally(() => setLoading(false));
   }, [reviewedStatus, region]);
 
-  const columns = [
+  const handleReview = async (id) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/${id}`, { revisado: true }, {
+  headers: { 'Content-Type': 'application/json' }
+      });
+      // The rest of the code assumes that the server responds with the affected row count
+      const updatedLetter = response.data;
+      if (updatedLetter.affected === 1) {
+        setRows(currentRows => currentRows.map(row => row.id === id ? { ...row, revisado: true } : row));
+        setReviewedStatus(true);
+        Swal.fire('Success!', 'The letter has been marked as reviewed.', 'success');
+      } else {
+        Swal.fire('Notice!', 'No changes were made.', 'info');
+      }
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      Swal.fire('Failed!', 'There was an issue updating the letter.', 'error');
+    }
+  };
+
+  const handleRevertReview = async (id) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/${id}`, { revisado: false }, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const updatedLetter = response.data;
+      if (updatedLetter.affected === 1) {
+        setRows(currentRows => currentRows.map(row => row.id === id ? { ...row, revisado: false } : row));
+        setReviewedStatus(false);
+        Swal.fire('Success!', 'The letter has been reverted to not reviewed.', 'success');
+      } else {
+        Swal.fire('Notice!', 'No changes were made.', 'info');
+      }
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      Swal.fire('Failed!', 'There was an issue reverting the letter.', 'error');
+    }
+  };
+   const columns = [
     { field: 'run', headerName: 'RUN', width: 150 },
     { field: 'nombre', headerName: 'Nombre', width: 150 },
     { field: 'apellidop', headerName: 'A. Paterno', width: 150 },
@@ -38,7 +88,37 @@ export default function Tablagenericas({ region }) {
     { field: 'fsolicitud', headerName: 'Fecha Solicitud', width: 180 },
     { field: 'factualizacion', headerName: 'Fecha Modificación', width: 180 },
     { field: 'revisado', headerName: 'Revisado', width: 120 },
-    
+    {
+      field: 'accion',
+      headerName: 'Acción',
+      width: 150,
+      renderCell: (params) => (
+        <>
+          {params.row.revisado ? (
+            <>
+              <IconButton color="primary">
+                <FileDownloadIcon />
+              </IconButton>
+              <IconButton onClick={() => handleRevertReview(params.id)} color="primary">
+                <ReplayIcon />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <IconButton onClick={() => handleReview(params.id)} color="primary">
+                <CheckCircleIcon />
+              </IconButton>
+              <IconButton color="primary">
+                <DescriptionIcon />
+              </IconButton>
+              <IconButton color="primary">
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
+        </>
+      ),
+    },
   ];
 
   return (
@@ -54,8 +134,8 @@ export default function Tablagenericas({ region }) {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'center', 
-          gap: 2, 
+          justifyContent: 'center',
+          gap: 2,
           padding: 2
         }}
       >
@@ -75,7 +155,7 @@ export default function Tablagenericas({ region }) {
         </Button>
       </Box>
       <DataGrid
-        rows={rows}
+        rows={rows.filter(row => reviewedStatus ? row.revisado : !row.revisado)}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5, 10, 20]}
