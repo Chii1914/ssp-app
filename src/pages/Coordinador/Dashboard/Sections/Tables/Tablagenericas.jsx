@@ -125,6 +125,21 @@ export default function Tablagenericas({ region }) {
     }
   };
 
+  const handleGenerateOrUpdate = async (id) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/${id}`);
+      if (response.status === 200) {
+        fetchAndUpdateLetters(); // Actualizar datos después de generar o actualizar la carta
+        Swal.fire('Success!', 'The letter has been generated or updated.', 'success');
+      } else {
+        Swal.fire('Notice!', 'No changes were made.', 'info');
+      }
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      Swal.fire('Failed!', 'There was an issue generating or updating the letter.', 'error');
+    }
+  };
+
   const columns = [
     { field: 'run', headerName: 'RUN', width: 150 },
     { field: 'nombre', headerName: 'Nombre', width: 150 },
@@ -152,12 +167,13 @@ export default function Tablagenericas({ region }) {
             <>
               <IconButton onClick={() => handleReview(params.row.run)} color="primary">
                 <CheckCircleIcon />
-              </IconButton>
-              <IconButton color="primary">
-                <DescriptionIcon />
+              
               </IconButton>
               <IconButton onClick={() => handleDeleteLetter(params.row.run)} color="primary">
                 <DeleteIcon />
+              </IconButton>
+              <IconButton onClick={() => handleGenerateOrUpdate(params.row.run)} color="primary">
+                <DescriptionIcon /> 
               </IconButton>
             </>
           )}
