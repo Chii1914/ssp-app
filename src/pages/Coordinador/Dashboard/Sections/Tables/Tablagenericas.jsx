@@ -99,13 +99,13 @@ export default function Tablagenericas({ region }) {
               <IconButton color="primary">
                 <FileDownloadIcon />
               </IconButton>
-              <IconButton onClick={() => handleRevertReview(params.id)} color="primary">
+              <IconButton onClick={() => handleRevertReview(params.row.run)} color="primary">
                 <ReplayIcon />
               </IconButton>
             </>
           ) : (
             <>
-              <IconButton onClick={() => handleReview(params.id)} color="primary">
+              <IconButton onClick={() => handleReview(params.row.run)} color="primary">
                 <CheckCircleIcon />
               </IconButton>
               <IconButton color="primary">
