@@ -8,7 +8,7 @@ function MainLayout() {
   useEffect(() => {
     setTimeout(() => {
       isLoading(false);
-    }, 2000);
+    }, 1000);
   }, []);
 
   return (

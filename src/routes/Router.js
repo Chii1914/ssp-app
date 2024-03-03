@@ -16,6 +16,8 @@ const Navbar = Loadable(lazy(() => import("../components/Navbar/Navbar")));
 
 const Error = Loadable(lazy(() => import("../pages/Error/404")));
 
+const Login = Loadable(lazy(() => import("../layouts/auth/Login")));
+
 /* ****Pages***** */
 //Prácticas
 const Register = Loadable(
@@ -57,20 +59,30 @@ const Reportes = Loadable(
 
 const Router = [
   {
+    //Rutas públicas
     path: "/",
     element: <FullLayout />,
     children: [
       { path: "", exact: true, element: <Inicio /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "404", element: <Error /> },
-      { path: "cartaspost", exact: true, element: <Cartaspost /> },
     ],
   },
   {
+    path: "/practicas",
+    element: <Login />,
+    children: [
+      { path: "success", element: <Cartaspost /> },
+      //Aquí tendrá que ir a una pantalla "Unauthorized" { path: "*", element:  <> },
+    ],
+  },
+  {
+    //Rutas públicas
+    //Deprecated
     path: "/", //Second layout-> Full Layout pero sin footer
     element: <SecondLayout />,
     children: [
-      { path: "registro", exact: true, element: <Register /> },
+      { path: "registro", exact: true, element: <Register /> }, //
       { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
       { path: "*", element: <Navigate to="/404" /> },
     ],
