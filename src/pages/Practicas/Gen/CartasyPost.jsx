@@ -1,11 +1,11 @@
 import React from 'react'
-import LogIn from './Components/Options'
+import Options from './Components/Options'
 import { Box } from '@mui/system'
 
 const CartasyPosts = () => {
   return (    
       <Box>
-        < LogIn/> 
+        < Options/> 
       </Box>
   )
 }
