@@ -1,5 +1,5 @@
 import SignIn from "../Login/Login"; // Actualiza esto con la ruta correcta al componente SignIn
-import React from "react";
+import React, {useEffect} from "react";
 import PageContainer from "../../../components/container/PageContainer";
 import { Box, Typography, Grid, useTheme, useMediaQuery } from "@mui/material";
 import backgroundImage from "./Components/Background.jpg";
@@ -7,8 +7,9 @@ import backgroundImage from "./Components/Background.jpg";
 function Inicio() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
+ 
   return (
+
     <PageContainer
       title="Prácticas - Postulación a practicas profesionales | Administración Pública"
       description="Sistema de prácticas profesionales"

@@ -67,6 +67,8 @@ const tiers = [
 
 const defaultTheme = createTheme();
 
+//TODO USSEFFECTS PARA LAS COSITAS 
+
 export default function Options() {
   return (
     <ThemeProvider theme={defaultTheme}>

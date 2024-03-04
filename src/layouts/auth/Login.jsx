@@ -10,20 +10,16 @@ function Login() {
     const urlParams = new URLSearchParams(queryString);
     let token = urlParams.get('token');
     if (token) {
-      localStorage.setItem('token', token);
       Cookies.set('token', token, { expires: 3 });
       navigate(window.location.pathname, { replace: true }); // Clear the URL
     }else if (Cookies.get('token')) {
-      token = Cookies.get('token')
-      localStorage.setItem('token', token);
-      Cookies.set('token', token, { expires: 3 });
       navigate(window.location.pathname, { replace: true });
     }else{
       navigate('/');
     }
   }, [navigate]);
 
-  return <>{(Cookies.get('token') || localStorage.getItem('token')) && <Outlet />}</>;
+  return <>{(Cookies.get('token')) && <Outlet />}</>;
 }
 
 export default Login;

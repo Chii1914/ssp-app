@@ -77,17 +77,6 @@ const Router = [
     ],
   },
   {
-    //Rutas públicas
-    //Deprecated
-    path: "/", //Second layout-> Full Layout pero sin footer
-    element: <SecondLayout />,
-    children: [
-      { path: "registro", exact: true, element: <Register /> }, //
-      { path: "iniciar_sesion", exact: true, element: <InicioSesion /> },
-      { path: "*", element: <Navigate to="/404" /> },
-    ],
-  },
-  {
     path: "/coord", //Second layout-> Full Layout pero sin footer
     element: null,
     children: [

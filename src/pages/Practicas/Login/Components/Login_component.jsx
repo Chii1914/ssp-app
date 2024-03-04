@@ -10,7 +10,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import ReplyIcon from "@mui/icons-material/Reply";
 import Cookies from 'js-cookie';
-
 import { useNavigate } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -22,14 +21,12 @@ export default function SignIn() {
 
   
   const handleLogin = () => {
-    if (Cookies.get('token') || localStorage.getItem('token')) {
+    if (Cookies.get('token')) {
       navigate("/practicas/success");
     }else{
-      window.location.href = "http://localhost:3000/api/auth/google";
-    }
+      window.location.href = "http://localhost:3000/api/auth/google?prompt=select_account";    }
   }
   
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
