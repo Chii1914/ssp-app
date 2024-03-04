@@ -1,20 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import Modal from "@mui/material/Modal";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Paper,
+} from "@mui/material";
 //Todo function to validate token
 
 const defaultTheme = createTheme();
@@ -22,15 +36,27 @@ const defaultTheme = createTheme();
 //TODO USSEFFECTS PARA LAS COSITAS
 
 export default function Options() {
-  const [open, setOpen] = useState(null);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [ct_cg, setCg] = useState(null);
   const [ct_cp, setCp] = useState(null);
   const [data, setData] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  const email = jwtDecode(Cookies.get("token")).email;
-
+  const [inputs, setInputs] = useState({
+    primerNombre: "",
+    segundoNombre: "",
+    apellidoPaterno: "",
+    apellidoMaterno: "",
+    run: "",
+    correoInstitucional: "",
+    df: "",
+    sexo: "",
+    sede: "",
+    anioIngreso: "",
+    correo_personal: "",
+  });
   /*
     run: 21061253,
     df: 'k',
@@ -48,36 +74,86 @@ export default function Options() {
     sexo: 'masculino'
   */
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:3000/api/alumno/rev/${email}`
-          );
-          setData(response.data);
-          if (
-            data.run === null ||
-            data.df === null ||
-            data.primerNombre === null ||
-            data.segundoNombre === null ||
-            data.apellidoPaterno === null ||
-            data.apellidoMaterno === null ||
-            data.correoInstitucional === null ||
-            data.telefono === null ||
-            data.ultimoSemAprobado === null ||
-            data.sede === null ||
-            data.anioIngreso === null ||
-            data.sexo === null
-          ) {
-            setOpen(true); // Update the open state variable
-          }
-        } catch (error) {
-          console.error("Error fetching data: ", error);
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%", // Increase the width here
+    maxWidth: "800px", // Set a max-width to ensure it doesn't grow too wide
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const email = jwtDecode(Cookies.get("token")).email;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prevInputs) => ({
+      ...prevInputs,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = async (e) => {
+    console.log(inputs);
+    return;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/alumno/rev/${email}`
+        );
+        const data = response.data;
+        console.log(data);
+        setInputs({
+          primerNombre: data.primerNombre || "",
+          segundoNombre: data.segundoNombre || "",
+          apellidoPaterno: data.apellidoPaterno || "",
+          apellidoMaterno: data.apellidoMaterno || "",
+          run: data.run || "",
+          correoInstitucional: data.correoInstitucional || "",
+          df: data.df || "",
+          sexo: data.sexo || "",
+          sede: data.sede || "",
+          anioIngreso: data.anioIngreso.toString() || "", // Assuming anioIngreso is a number
+          correo_personal: data.correoPersonal || "",
+        });
+        // Assuming all fields are necessary and directly mapping fetchedData fields to form state
+        if (
+          data.run === null ||
+          data.df === null ||
+          data.primerNombre === null ||
+          data.segundoNombre === null ||
+          data.apellidoPaterno === null ||
+          data.apellidoMaterno === null ||
+          data.correoInstitucional === null ||
+          data.telefono === null ||
+          data.ultimoSemAprobado === null ||
+          data.sede === null ||
+          data.anioIngreso === null ||
+          data.sexo === null
+        ) {
+          setIsButtonDisabled(true);
+          handleOpen(); // Open the modal if any field is null
+        } else {
+          setIsButtonDisabled(false);
+          handleClose(); // Close the modal if all fields are filled
         }
-      };
-      fetchData();
-    }, [email]);
-    
+        // Update form state with fetched data
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        setIsButtonDisabled(true); // Consider disabling the button and showing the modal on error as well
+        handleOpen();
+      }
+    };
+
+    fetchData();
+  }, [email]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -160,6 +236,7 @@ export default function Options() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {/*
       <Modal
         open={open}
         onClose={handleClose}
@@ -167,11 +244,210 @@ export default function Options() {
         aria-describedby="modal-modal-description"
       >
         <div>alo te faltan cosa</div>
-      </Modal>
+        </Modal>
+  */}
       <GlobalStyles
         styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
       />
       <CssBaseline />
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Modificación data personal
+          </Typography>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 1 }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="primerNombre"
+              label="Ingrese su primer nombre"
+              name="primer_nombre"
+              autoComplete="primer_nombre"
+              autoFocus
+              value={inputs.primerNombre}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Ingrese su segundo nombre"
+              type="text"
+              id="segundoNombre"
+              value={inputs.segundoNombre}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="primer_apellido"
+              label="Ingrese su primer apellido"
+              type="primer_apellido"
+              id="apellidoPaterno"
+              value={inputs.apellidoPaterno}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="segundo_apellido"
+              label="Ingrese su segundo apellido"
+              type="text"
+              id="apellidoMaterno"
+              value={inputs.apellidoMaterno}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="rut"
+              label="Ingrese su rut sin puntos ni guión"
+              type="text"
+              id="run"
+              value={inputs.run}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="correo_u"
+              label="Ingrese su correo institucional"
+              type="text"
+              id="correoInstitucional"
+              value={inputs.correoInstitucional}
+              onChange={handleChange}
+            />
+
+            <Box>
+              <Grid container spacing={3}>
+                {" "}
+                {/* Wrapper Grid container */}
+                <Grid item xs={6}>
+                  {" "}
+                  {/* First Grid item */}
+                  <FormLabel id="genero">Gender</FormLabel>
+                  <RadioGroup defaultValue="Mujer" name="genero">
+                    <FormControlLabel
+                      value="Mujer"
+                      control={<Radio />}
+                      label="Mujer"
+                    />
+                    <FormControlLabel
+                      value="Hombre"
+                      control={<Radio />}
+                      label="Hombre"
+                    />
+                  </RadioGroup>
+                </Grid>
+                <Grid item xs={6}>
+                  {" "}
+                  {/* First Grid item */}
+                  <InputLabel id="df">Dígito Verificador</InputLabel>
+                  <Select
+                    labelId="df"
+                    id="df"
+                    label="df"
+                    name="df"
+                    value={inputs.df}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={"0"}>0</MenuItem>
+                    <MenuItem value={"1"}>1</MenuItem>
+                    <MenuItem value={"2"}>2</MenuItem>
+                    <MenuItem value={"3"}>3</MenuItem>
+                    <MenuItem value={"4"}>4</MenuItem>
+                    <MenuItem value={"5"}>5</MenuItem>
+                    <MenuItem value={"6"}>6</MenuItem>
+                    <MenuItem value={"7"}>7</MenuItem>
+                    <MenuItem value={"8"}>8</MenuItem>
+                    <MenuItem value={"9"}>9</MenuItem>
+                    <MenuItem value={"k"}>k</MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs={6}>
+                  {" "}
+                  {/* Second Grid item */}
+                  <InputLabel id="Sede">Sede</InputLabel>
+                  <Select
+                    labelId="Sede"
+                    id="sede"
+                    label="Sede"
+                    name="Sede"
+                    value={inputs.sede}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={"Valparaíso"}>Valparaíso</MenuItem>
+                    <MenuItem value={"Santiago"}>Santiago</MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs={6}>
+                  {" "}
+                  {/* Second Grid item */}
+                  <InputLabel id="agno">Año de Ingreso</InputLabel>
+                  <Select
+                    labelId="agno"
+                    id="anioIngreso"
+                    label="agno"
+                    name="agno"
+                    value={inputs.anioIngreso}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={"2008"}>2008</MenuItem>
+                    <MenuItem value={"2009"}>2009</MenuItem>
+                    <MenuItem value={"2010"}>2010</MenuItem>
+                    <MenuItem value={"2011"}>2011</MenuItem>
+                    <MenuItem value={"2012"}>2012</MenuItem>
+                    <MenuItem value={"2013"}>2013</MenuItem>
+                    <MenuItem value={"2014"}>2014</MenuItem>
+                    <MenuItem value={"2015"}>2015</MenuItem>
+                    <MenuItem value={"2016"}>2016</MenuItem>
+                    <MenuItem value={"2017"}>2017</MenuItem>
+                    <MenuItem value={"2018"}>2018</MenuItem>
+                    <MenuItem value={"2019"}>2019</MenuItem>
+                    <MenuItem value={"2020"}>2020</MenuItem>
+                    <MenuItem value={"2021"}>2021</MenuItem>
+                    <MenuItem value={"2022"}>2022</MenuItem>
+                    <MenuItem value={"2023"}>2023</MenuItem>
+                    <MenuItem value={"2024"}>2024</MenuItem>
+                  </Select>
+                </Grid>
+              </Grid>
+            </Box>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="correo_personal"
+              label="Correo personal"
+              type="correo_personal"
+              id="correoPersonal"
+              value={inputs.correo_personal}
+              onChange={handleChange}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Modificar Data Personal
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
       <Container
         disableGutters
         maxWidth="sm"
@@ -207,7 +483,7 @@ export default function Options() {
           />
         </Box>
       </Container>
-      <Button onClick={handleOpen}>alo </Button>{" "}
+      <Button onClick={handleOpen}>Modificar data perfil</Button>{" "}
       <Container maxWidth={false} component="main">
         <Grid container spacing={2} alignItems="flex">
           {tiers.map((tier) => (
@@ -266,7 +542,11 @@ export default function Options() {
                   </ul>
                 </CardContent>
                 <CardActions sx={{ mb: 2 }}>
-                  <Button fullWidth variant={tier.buttonVariant}>
+                  <Button
+                    disabled={isButtonDisabled}
+                    fullWidth
+                    variant={tier.buttonVariant}
+                  >
                     {tier.buttonText}
                   </Button>
                 </CardActions>
