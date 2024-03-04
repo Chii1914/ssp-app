@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/APU-Front/static/css/main.5685c885.css",
-    "main.js": "/APU-Front/static/js/main.0e40105c.js",
+    "main.js": "/APU-Front/static/js/main.b03e6309.js",
     "static/js/952.5e7ad449.chunk.js": "/APU-Front/static/js/952.5e7ad449.chunk.js",
     "static/js/542.b63e4aac.chunk.js": "/APU-Front/static/js/542.b63e4aac.chunk.js",
     "static/js/100.b691b620.chunk.js": "/APU-Front/static/js/100.b691b620.chunk.js",
@@ -95,7 +95,7 @@
     "static/media/roboto-greek-ext-700-normal.woff": "/APU-Front/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/APU-Front/index.html",
     "main.5685c885.css.map": "/APU-Front/static/css/main.5685c885.css.map",
-    "main.0e40105c.js.map": "/APU-Front/static/js/main.0e40105c.js.map",
+    "main.b03e6309.js.map": "/APU-Front/static/js/main.b03e6309.js.map",
     "952.5e7ad449.chunk.js.map": "/APU-Front/static/js/952.5e7ad449.chunk.js.map",
     "542.b63e4aac.chunk.js.map": "/APU-Front/static/js/542.b63e4aac.chunk.js.map",
     "100.b691b620.chunk.js.map": "/APU-Front/static/js/100.b691b620.chunk.js.map",
@@ -131,6 +131,6 @@
   },
   "entrypoints": [
     "static/css/main.5685c885.css",
-    "static/js/main.0e40105c.js"
+    "static/js/main.b03e6309.js"
   ]
 }
