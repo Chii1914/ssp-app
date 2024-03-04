@@ -9,16 +9,24 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import ReplyIcon from "@mui/icons-material/Reply";
+import Cookies from 'js-cookie';
 
 import { useNavigate } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
+
+
 export default function SignIn() {
+  const navigate = useNavigate();
+
   
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/api/auth/google";
+    if (Cookies.get('token') || localStorage.getItem('token')) {
+      navigate("/practicas/success");
+    }else{
+      window.location.href = "http://localhost:3000/api/auth/google";
+    }
   }
   
 

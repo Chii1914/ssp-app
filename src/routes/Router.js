@@ -72,7 +72,7 @@ const Router = [
     path: "/practicas",
     element: <Login />,
     children: [
-      { path: "success", element: <Cartaspost /> },
+      {path: "success", element: <Cartaspost />},
       //Aquí tendrá que ir a una pantalla "Unauthorized" { path: "*", element:  <> },
     ],
   },
@@ -103,9 +103,9 @@ const Router = [
       { path: "", exact: true, element: <Dashboard /> },
       { path: "*", element: <Navigate to="/404" /> },
       { path: "postulaciones", exact: true, element: <Postulaciones /> },
-      { path: "cartas", exact: true, element: <Cartas />},
-      { path: "settings", exact: true, element: <Settings />},
-      { path: "reportes", exact: true, element: <Reportes />}
+      { path: "cartas", exact: true, element: <Cartas /> },
+      { path: "settings", exact: true, element: <Settings /> },
+      { path: "reportes", exact: true, element: <Reportes /> },
     ],
   },
 ];

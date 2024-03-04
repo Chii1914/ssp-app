@@ -16,6 +16,10 @@ import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 
+
+//Todo function to validate token
+
+
 const tiers = [
   {
     title: 'Carta Genérica',
