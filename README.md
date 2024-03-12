@@ -1,1 +1,1 @@
-# APU-Front
+# App para prácticas
