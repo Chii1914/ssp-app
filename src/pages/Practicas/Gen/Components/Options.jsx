@@ -98,6 +98,8 @@ export default function Options() {
   };
   const handleSubmit = async (e) => {
     console.log(inputs);
+
+    //Realizar método patch para actualizar persona, dejar en claro que si falta uno de los inputs, la wea no se debe actualizar 
     return;
   };
 
@@ -267,7 +269,7 @@ export default function Options() {
               fullWidth
               id="primerNombre"
               label="Ingrese su primer nombre"
-              name="primer_nombre"
+              name="primerNombre"
               autoComplete="primer_nombre"
               autoFocus
               value={inputs.primerNombre}
@@ -279,6 +281,7 @@ export default function Options() {
               fullWidth
               label="Ingrese su segundo nombre"
               type="text"
+              name="segundoNombre"
               id="segundoNombre"
               value={inputs.segundoNombre}
               onChange={handleChange}
@@ -287,9 +290,9 @@ export default function Options() {
               margin="normal"
               required
               fullWidth
-              name="primer_apellido"
+              name="apellidoPaterno"
               label="Ingrese su primer apellido"
-              type="primer_apellido"
+              type="apellidoPaterno"
               id="apellidoPaterno"
               value={inputs.apellidoPaterno}
               onChange={handleChange}
@@ -298,7 +301,7 @@ export default function Options() {
               margin="normal"
               required
               fullWidth
-              name="segundo_apellido"
+              name="apellidoMaterno"
               label="Ingrese su segundo apellido"
               type="text"
               id="apellidoMaterno"
@@ -309,7 +312,7 @@ export default function Options() {
               margin="normal"
               required
               fullWidth
-              name="rut"
+              name="run"
               label="Ingrese su rut sin puntos ni guión"
               type="text"
               id="run"
@@ -320,7 +323,7 @@ export default function Options() {
               margin="normal"
               required
               fullWidth
-              name="correo_u"
+              name="correoInstitucional"
               label="Ingrese su correo institucional"
               type="text"
               id="correoInstitucional"
@@ -335,8 +338,8 @@ export default function Options() {
                 <Grid item xs={6}>
                   {" "}
                   {/* First Grid item */}
-                  <FormLabel id="genero">Gender</FormLabel>
-                  <RadioGroup defaultValue="Mujer" name="genero">
+                  <FormLabel id="sexo">Gender</FormLabel>
+                  <RadioGroup defaultValue="Mujer" name="sexo">
                     <FormControlLabel
                       value="Mujer"
                       control={<Radio />}
@@ -379,10 +382,10 @@ export default function Options() {
                   {/* Second Grid item */}
                   <InputLabel id="Sede">Sede</InputLabel>
                   <Select
-                    labelId="Sede"
+                    labelId="sede"
                     id="sede"
-                    label="Sede"
-                    name="Sede"
+                    label="sede"
+                    name="sede"
                     value={inputs.sede}
                     onChange={handleChange}
                   >
@@ -395,10 +398,10 @@ export default function Options() {
                   {/* Second Grid item */}
                   <InputLabel id="agno">Año de Ingreso</InputLabel>
                   <Select
-                    labelId="agno"
+                    labelId="anioIngreso"
                     id="anioIngreso"
-                    label="agno"
-                    name="agno"
+                    label="anioIngreso"
+                    name="anioIngreso"
                     value={inputs.anioIngreso}
                     onChange={handleChange}
                   >
