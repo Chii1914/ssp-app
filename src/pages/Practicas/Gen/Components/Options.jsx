@@ -29,6 +29,7 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
+import { parse } from "@fortawesome/fontawesome-svg-core";
 //Todo function to validate token
 
 const defaultTheme = createTheme();
@@ -55,7 +56,9 @@ export default function Options() {
     sexo: "",
     sede: "",
     anioIngreso: "",
-    correo_personal: "",
+    correoPersonal: "",
+    telefono: "",
+    ultimoSemAprobado: ""
   });
   /*
     run: 21061253,
@@ -89,18 +92,35 @@ export default function Options() {
 
   const email = jwtDecode(Cookies.get("token")).email;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInputs((prevInputs) => ({
-      ...prevInputs,
-      [name]: value,
-    }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setInputs({ ...inputs, [name]: value });
   };
-  const handleSubmit = async (e) => {
-    console.log(inputs);
 
-    //Realizar método patch para actualizar persona, dejar en claro que si falta uno de los inputs, la wea no se debe actualizar 
+  const updateInformation = async () => {
+    try {
+      inputs.run = parseInt(inputs.run);
+      const response = await axios.patch(
+        "http://localhost:3000/api/alumno",
+        inputs,
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      // Handle response or further actions
+    } catch (error) {
+      console.error("Error updating information:", error);
+      // Handle error
+    }
+    //Realizar método patch para actualizar persona, dejar en claro que si falta uno de los inputs, la wea no se debe actualizar
     return;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    updateInformation();
   };
 
   useEffect(() => {
@@ -110,19 +130,22 @@ export default function Options() {
           `http://localhost:3000/api/alumno/rev/${email}`
         );
         const data = response.data;
-        console.log(data);
+        console.log(data)
+
         setInputs({
           primerNombre: data.primerNombre || "",
           segundoNombre: data.segundoNombre || "",
           apellidoPaterno: data.apellidoPaterno || "",
           apellidoMaterno: data.apellidoMaterno || "",
-          run: data.run || "",
+          run: parseInt(data.run) || "",
           correoInstitucional: data.correoInstitucional || "",
           df: data.df || "",
           sexo: data.sexo || "",
           sede: data.sede || "",
-          anioIngreso: data.anioIngreso.toString() || "", // Assuming anioIngreso is a number
-          correo_personal: data.correoPersonal || "",
+          anioIngreso: data.anioIngreso || "", // Assuming anioIngreso is a number
+          correoPersonal: data.correoPersonal || "",
+          telefono: data.telefono || "",
+          ultimoSemAprobado: data.ultimoSemAprobado || "",
         });
         // Assuming all fields are necessary and directly mapping fetchedData fields to form state
         if (
@@ -134,10 +157,11 @@ export default function Options() {
           data.apellidoMaterno === null ||
           data.correoInstitucional === null ||
           data.telefono === null ||
-          data.ultimoSemAprobado === null ||
           data.sede === null ||
           data.anioIngreso === null ||
-          data.sexo === null
+          data.sexo === null ||
+          data.telefono === null ||
+          data.ultimoSemAprobado === null
         ) {
           setIsButtonDisabled(true);
           handleOpen(); // Open the modal if any field is null
@@ -314,10 +338,11 @@ export default function Options() {
               fullWidth
               name="run"
               label="Ingrese su rut sin puntos ni guión"
-              type="text"
+              type="number"
               id="run"
               value={inputs.run}
               onChange={handleChange}
+              inputProps={{ pattern: "[0-9]*" }}
             />
             <TextField
               margin="normal"
@@ -338,15 +363,20 @@ export default function Options() {
                 <Grid item xs={6}>
                   {" "}
                   {/* First Grid item */}
-                  <FormLabel id="sexo">Gender</FormLabel>
-                  <RadioGroup defaultValue="Mujer" name="sexo">
+                  <FormLabel id="sexo">Género</FormLabel>
+                  <RadioGroup
+                    defaultValue="femenino"
+                    name="sexo"
+                    onChange={handleChange}
+                    value={inputs.sexo}
+                  >
                     <FormControlLabel
-                      value="Mujer"
+                      value="femenino"
                       control={<Radio />}
                       label="Mujer"
                     />
                     <FormControlLabel
-                      value="Hombre"
+                      value="masculino"
                       control={<Radio />}
                       label="Hombre"
                     />
@@ -380,7 +410,7 @@ export default function Options() {
                 <Grid item xs={6}>
                   {" "}
                   {/* Second Grid item */}
-                  <InputLabel id="Sede">Sede</InputLabel>
+                  <InputLabel id="sede">Sede</InputLabel>
                   <Select
                     labelId="sede"
                     id="sede"
@@ -408,38 +438,81 @@ export default function Options() {
                     <MenuItem value="">
                       <em>None</em>
                     </MenuItem>
-                    <MenuItem value={"2008"}>2008</MenuItem>
-                    <MenuItem value={"2009"}>2009</MenuItem>
-                    <MenuItem value={"2010"}>2010</MenuItem>
-                    <MenuItem value={"2011"}>2011</MenuItem>
-                    <MenuItem value={"2012"}>2012</MenuItem>
-                    <MenuItem value={"2013"}>2013</MenuItem>
-                    <MenuItem value={"2014"}>2014</MenuItem>
-                    <MenuItem value={"2015"}>2015</MenuItem>
-                    <MenuItem value={"2016"}>2016</MenuItem>
-                    <MenuItem value={"2017"}>2017</MenuItem>
-                    <MenuItem value={"2018"}>2018</MenuItem>
-                    <MenuItem value={"2019"}>2019</MenuItem>
-                    <MenuItem value={"2020"}>2020</MenuItem>
-                    <MenuItem value={"2021"}>2021</MenuItem>
-                    <MenuItem value={"2022"}>2022</MenuItem>
-                    <MenuItem value={"2023"}>2023</MenuItem>
-                    <MenuItem value={"2024"}>2024</MenuItem>
+                    <MenuItem value={2008}>2008</MenuItem>
+                    <MenuItem value={2009}>2009</MenuItem>
+                    <MenuItem value={2010}>2010</MenuItem>
+                    <MenuItem value={2011}>2011</MenuItem>
+                    <MenuItem value={2012}>2012</MenuItem>
+                    <MenuItem value={2013}>2013</MenuItem>
+                    <MenuItem value={2014}>2014</MenuItem>
+                    <MenuItem value={2015}>2015</MenuItem>
+                    <MenuItem value={2016}>2016</MenuItem>
+                    <MenuItem value={2017}>2017</MenuItem>
+                    <MenuItem value={2018}>2018</MenuItem>
+                    <MenuItem value={2019}>2019</MenuItem>
+                    <MenuItem value={2020}>2020</MenuItem>
+                    <MenuItem value={2021}>2021</MenuItem>
+                    <MenuItem value={2022}>2022</MenuItem>
+                    <MenuItem value={2023}>2023</MenuItem>
+                    <MenuItem value={2024}>2024</MenuItem>
                   </Select>
                 </Grid>
               </Grid>
             </Box>
             <TextField
               margin="normal"
+              fullWidth
+              name="correoPersonal"
+              label="Correo Personal"
+              type="correoPersonal"
+              id="correoPersonal"
+              value={inputs.correoPersonal}
+              onChange={handleChange}
+              defaultValue={null}
+
+            />
+
+            <TextField
+              margin="normal"
               required
               fullWidth
-              name="correo_personal"
-              label="Correo personal"
-              type="correo_personal"
-              id="correoPersonal"
-              value={inputs.correo_personal}
-              onChange={handleChange}
+              name="telefono"
+              label="Teléfono"
+              type="tel"
+              id="telefono"
+              value={inputs.telefono}
+              onChange={(e) => {
+                // Allow changes only if the new value is empty or all digits
+                if (e.target.value === "" || /^[0-9]*$/.test(e.target.value)) {
+                  setInputs({ ...inputs, [e.target.name]: e.target.value });
+                }
+              }}
             />
+
+            <InputLabel id="ultimoSemAprobado">
+              Último Semestre Aprobado
+            </InputLabel>
+            <Select
+              defaultValue={null}
+              labelId="ultimoSemAprobado"
+              id="ultimoSemAprobado"
+              value={inputs.ultimoSemAprobado}
+              label="Último Semestre Aprobado"
+              name="ultimoSemAprobado"
+              onChange={handleChange}
+            >
+              <MenuItem value="Primer Semestre">Primer Semestre</MenuItem>
+              <MenuItem value="Segundo Semestre">Segundo Semestre</MenuItem>
+              <MenuItem value="Tercer Semestre">Tercer Semestre</MenuItem>
+              <MenuItem value="Cuarto Semestre">Cuarto Semestre</MenuItem>
+              <MenuItem value="Quinto Semestre">Quinto Semestre</MenuItem>
+              <MenuItem value="Sexto Semestre">Sexto Semestre</MenuItem>
+              <MenuItem value="Séptimo Semestre">Séptimo Semestre</MenuItem>
+              <MenuItem value="Octavo Semestre">Octavo Semestre</MenuItem>
+              <MenuItem value="Noveno Semestre">Noveno Semestre</MenuItem>
+              <MenuItem value="Décimo Semestre">Décimo Semestre</MenuItem>
+            </Select>
+
             <Button
               type="submit"
               fullWidth
