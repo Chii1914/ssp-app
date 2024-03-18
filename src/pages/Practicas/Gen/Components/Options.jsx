@@ -97,6 +97,10 @@ export default function Options() {
     setInputs({ ...inputs, [name]: value });
   };
 
+  const handleButtonClick = (actionName) => {
+    console.log(`Action ${actionName} triggered`);
+  };
+  
   const updateInformation = async () => {
     try {
       inputs.run = parseInt(inputs.run);
@@ -119,7 +123,6 @@ export default function Options() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     updateInformation();
   };
 
@@ -130,8 +133,6 @@ export default function Options() {
           `http://localhost:3000/api/alumno/rev/${email}`
         );
         const data = response.data;
-        console.log(data)
-
         setInputs({
           primerNombre: data.primerNombre || "",
           segundoNombre: data.segundoNombre || "",
@@ -622,6 +623,7 @@ export default function Options() {
                     disabled={isButtonDisabled}
                     fullWidth
                     variant={tier.buttonVariant}
+                    onClick={() => handleButtonClick(tier.actionName)}
                   >
                     {tier.buttonText}
                   </Button>
