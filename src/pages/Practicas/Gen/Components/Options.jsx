@@ -202,12 +202,10 @@ export default function Options() {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(true)
       try {
         const response = await axios.get(
           `http://localhost:3000/api/alumno/ct-per/${email}`
         );
-        let cter = response.data
         if (response.data == 0) {
           setCp("0");
         } else {
