@@ -58,7 +58,7 @@ export default function Options() {
     anioIngreso: "",
     correoPersonal: "",
     telefono: "",
-    ultimoSemAprobado: ""
+    ultimoSemAprobado: "",
   });
   /*
     run: 21061253,
@@ -100,7 +100,7 @@ export default function Options() {
   const handleButtonClick = (actionName) => {
     console.log(`Action ${actionName} triggered`);
   };
-  
+
   const updateInformation = async () => {
     try {
       inputs.run = parseInt(inputs.run);
@@ -130,7 +130,13 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/alumno/rev/${email}`
+          `http://localhost:3000/api/alumno/rev/`,
+          {
+            mail: `${email}`,
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
         );
         const data = response.data;
         setInputs({
@@ -185,7 +191,12 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/alumno/ct-gen/${email}`
+          `http://localhost:3000/api/alumno/ct-gen`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
         );
         if (response.data == 0) {
           setCg("0");
@@ -204,13 +215,19 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/alumno/ct-per/${email}`
+          `http://localhost:3000/api/alumno/ct-per`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
         );
         if (response.data == 0) {
           setCp("0");
         } else {
-          setCg(response.data);
+          setCp(response.data);
         }
+
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -470,7 +487,6 @@ export default function Options() {
               value={inputs.correoPersonal}
               onChange={handleChange}
               defaultValue={null}
-
             />
 
             <TextField
@@ -494,7 +510,6 @@ export default function Options() {
               Último Semestre Aprobado
             </InputLabel>
             <Select
-              defaultValue={null}
               labelId="ultimoSemAprobado"
               id="ultimoSemAprobado"
               value={inputs.ultimoSemAprobado}
