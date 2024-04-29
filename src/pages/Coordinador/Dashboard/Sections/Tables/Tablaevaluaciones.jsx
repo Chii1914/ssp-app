@@ -85,6 +85,21 @@ export default function Tablaevaluaciones() {
     }
   };
 
+  const handleSinEvaluarClick = () => {
+    const filteredRows = initialRows.filter(row => row.estado === "Sin acción");
+    setRows(filteredRows);
+  };
+
+  const handleReprobadasClick = () => {
+    const filteredRows = initialRows.filter(row => row.estado === "Reprobada");
+    setRows(filteredRows);
+  };
+
+  const handleAprobadasClick = () => {
+    const filteredRows = initialRows.filter(row => row.estado === "Aprobada");
+    setRows(filteredRows);
+  };
+
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -207,15 +222,16 @@ export default function Tablaevaluaciones() {
       }}
     >
       <Box sx={{ display: "flex", padding: 2 }}>
-        <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+        <Button onClick={handleSinEvaluarClick} variant="contained" color="primary" sx={{ mr: 2 }}>
           No evaluadas
         </Button>
 
-        <Button variant="contained" color="success" sx={{ mr: 2 }}>
+        <Button onClick ={handleAprobadasClick} variant="contained" color="success" sx={{ mr: 2 }}>
           Aprobadas
         </Button>
 
         <Button
+          onClick={handleReprobadasClick}
           variant="contained"
           sx={{
             mr: 2,

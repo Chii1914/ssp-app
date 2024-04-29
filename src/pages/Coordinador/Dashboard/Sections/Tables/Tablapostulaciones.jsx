@@ -25,6 +25,8 @@ const randomRole = () => {
   return randomArrayItem(roles);
 };
 
+const API_BASE_URL_SR = 'http://localhost:3000/api/practicas/sn-rev/';
+
 const initialRows = [
   {
     id: randomId(),
@@ -37,7 +39,32 @@ const initialRows = [
     practica: "Segunda",
     estado: "Sin acción",
   },
+  {
+    id: randomId(),
+    run: "11111111-1",
+    nombre: "user2 ",
+    apellidop: "user2",
+    apellidom: "user2",
+    fsolicitud: "Día 11-09-2023 \nHora 12:00",
+    factualizacion: "Día 13-12-2023 \nHora 13:00",
+    practica: "Segunda",
+    estado: "Sin acción",
+  },
+  {
+    id: randomId(),
+    run: "11111111-2",
+    nombre: "user3 ",
+    apellidop: "user3",
+    apellidom: "user3",
+    fsolicitud: "Día 22-04-2024 \nHora 13:00",
+    factualizacion: "Día 23-05-2024 \nHora 14:00",
+    practica: "Primera",
+    estado: "Rechazada",
+  }
 ];
+
+
+
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -52,7 +79,8 @@ function EditToolbar(props) {
   };
 }
 
-export default function Tablaevaluaciones() {
+export default function Tablapostulaciones() {
+  const [loading, setLoading] = React.useState(false);
   const [rows, setRows] = React.useState(initialRows);
   const [rowModesModel, setRowModesModel] = React.useState({});
 
@@ -67,7 +95,28 @@ export default function Tablaevaluaciones() {
   };
 
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    const updatedInitialRows = initialRows.map(row =>
+      row.id === id ? { ...row, estado: "Rechazado" } : row
+    );
+    setRows(updatedInitialRows);
+  };
+  
+
+  const handleAcceptClick = (id) => () => {
+    const updatedInitialRows = initialRows.map(row =>
+      row.id === id ? { ...row, estado: "Aceptada" } : row
+    );
+    setRows(updatedInitialRows);
+  };
+
+  const handleSinAccionClick = () => {
+    const filteredRows = initialRows.filter(row => row.estado === "Sin acción");
+    setRows(filteredRows);
+  };
+
+  const handleRechazadasClick = () => {
+    const filteredRows = initialRows.filter(row => row.estado === "Rechazada");
+    setRows(filteredRows);
   };
 
   const handleCancelClick = (id) => () => {
@@ -162,7 +211,7 @@ export default function Tablaevaluaciones() {
           <GridActionsCellItem
             icon={<CheckBoxSharpIcon sx={{ color: "green" }} />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={handleAcceptClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
@@ -190,16 +239,18 @@ export default function Tablaevaluaciones() {
       }}
     >
       <Box sx={{ display: "flex", padding: 2 }}>
-        <Button variant="contained" color="success" sx={{ mr: 2 }}>
+        <Button variant="contained" color="success" sx={{ mr: 2 }} onClick={handleSinAccionClick}>
           Sin acción
         </Button>
         <Button
+          onClick={handleRechazadasClick}
           variant="contained"
           sx={{
             mr: 2,
             backgroundColor: "#86110e", // Replace with your custom color
             "&:hover": {
               backgroundColor: "#3f0605", // Replace with a darker shade for hover effect
+            
             },
           }}
         >
