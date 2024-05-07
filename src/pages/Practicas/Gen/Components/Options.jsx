@@ -96,8 +96,36 @@ export default function Options() {
     const { name, value } = event.target;
     setInputs({ ...inputs, [name]: value });
   };
-
+/*
+  'Action cartaGenerica triggered'
+  13:10:25.977 | +7 min	  
+    'Action cartaGenerica triggered'
+  13:06:53.477 | +10 min	  
+    'Action postulacionSegunda triggered'
+  13:06:51.441 | +10 min	  
+    'Action postulacionPrimera triggered'
+  13:06:49.889 | +10 min	  
+    'Action cartaPersonalizada triggered'
+  13:06:47.604 | +10 min	  
+    'Action cartaGenerica triggered
+    */
   const handleButtonClick = (actionName) => {
+    switch (actionName) {
+      case 'cartaGenerica':
+        console.log("gen")
+        break;
+      case 'cartaPersonalizada':
+        console.log("per")
+        break;
+      case 'postulacionPrimera':
+        console.log("prim")
+        break;
+      case 'postulacionSegunda':
+        console.log("seg")
+        break;
+      default:
+        console.log("first")
+    }
     console.log(`Action ${actionName} triggered`);
   };
 
@@ -130,9 +158,14 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
+<<<<<<< HEAD
           `http://localhost:3000/api/alumno/rev/`,
           {
             mail: `${email}`,
+=======
+          `http://localhost:3000/api/alumno/rev`,
+          {
+>>>>>>> f466bdb (Refactor Options component and handleButtonClick function)
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
             },
@@ -191,7 +224,11 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
+<<<<<<< HEAD
           `http://localhost:3000/api/alumno/ct-gen`,
+=======
+          `http://localhost:3000/api/alumno/ct-gen/`,
+>>>>>>> f466bdb (Refactor Options component and handleButtonClick function)
           {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
@@ -203,7 +240,6 @@ export default function Options() {
         } else {
           setCg(response.data);
         }
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -215,7 +251,11 @@ export default function Options() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
+<<<<<<< HEAD
           `http://localhost:3000/api/alumno/ct-per`,
+=======
+          `http://localhost:3000/api/alumno/ct-per/`,
+>>>>>>> f466bdb (Refactor Options component and handleButtonClick function)
           {
             headers: {
               Authorization: `Bearer ${Cookies.get("token")}`,
@@ -245,6 +285,7 @@ export default function Options() {
       ],
       buttonText: "Generar",
       buttonVariant: "contained",
+      actionName: "cartaGenerica",
     },
     {
       title: "Carta Personalizada",
@@ -255,6 +296,7 @@ export default function Options() {
       ],
       buttonText: "Generar",
       buttonVariant: "contained",
+      actionName: "cartaPersonalizada",
     },
     {
       title: "Postulación Primera Práctica",
@@ -265,6 +307,7 @@ export default function Options() {
       ],
       buttonText: "Generar",
       buttonVariant: "contained",
+      actionName: "postulacionPrimera",
     },
     {
       title: "Postulación Segunda Práctica",
@@ -275,6 +318,7 @@ export default function Options() {
       ],
       buttonText: "Generar",
       buttonVariant: "contained",
+      actionName: "postulacionSegunda",
     },
   ];
 
