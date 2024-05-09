@@ -1,4 +1,5 @@
 import * as React from "react";
+import Cookies from "js-cookie";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,13 +20,17 @@ import {
   randomId,
   randomArrayItem,
 } from "@mui/x-data-grid-generator";
+import axios from "axios";
 
 const roles = ["Market", "Finance", "Development"];
 const randomRole = () => {
   return randomArrayItem(roles);
 };
 
-const initialRows = [
+const API_BASE_URL_SR = 'http://localhost:3000/api/practicas/sn-rev';
+const API_BASE_URL_R = 'http://localhost:3000/api/practicas/rev-rech';
+
+/*const initialRows = [
   {
     id: randomId(),
     run: "12345678-9",
@@ -37,7 +42,30 @@ const initialRows = [
     practica: "Segunda",
     estado: "Sin acción",
   },
+  {
+    id: randomId(),
+    run: "11111111-1",
+    nombre: "user2 ",
+    apellidop: "user2",
+    apellidom: "user2",
+    fsolicitud: "Día 11-09-2023 \nHora 12:00",
+    factualizacion: "Día 13-12-2023 \nHora 13:00",
+    practica: "Segunda",
+    estado: "Sin acción",
+  },
+  {
+    id: randomId(),
+    run: "11111111-2",
+    nombre: "user3 ",
+    apellidop: "user3",
+    apellidom: "user3",
+    fsolicitud: "Día 22-04-2024 \nHora 13:00",
+    factualizacion: "Día 23-05-2024 \nHora 14:00",
+    practica: "Primera",
+    estado: "Rechazada",
+  }
 ];
+*/
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -52,9 +80,58 @@ function EditToolbar(props) {
   };
 }
 
-export default function Tablaevaluaciones() {
-  const [rows, setRows] = React.useState(initialRows);
+export default function Tablapostulaciones( region ) {
+
+  const [loading, setLoading] = React.useState(false);
+  const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
+
+
+  const obtenerPostulacionesSinRevision = async () => {
+    setLoading(true);
+    await axios.get(`${API_BASE_URL_SR}/${region}`, 
+    {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
+      .then(data => { setRows(data.data.map(item => ({ 
+        id: item.id,
+        run: item.alumno.run,
+        nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
+        apellidop: item.alumno.apellidoPaterno,
+        apellidom: item.alumno.apellidoMaterno,
+        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
+        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        practica: item.ocasion,
+        estado: item.estado
+      })))})
+      .catch(error => {
+        console.error('Failed to fetch letters:', error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  const obtenerPostulacionesRechazadas = async () => {
+    setLoading(true);
+    await axios.get(`${API_BASE_URL_R}/${region}`, 
+    {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
+      .then(data => { setRows(data.data.map(item => ({
+        id: item.id,
+        run: item.alumno.run,
+        nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
+        apellidop: item.alumno.apellidoPaterno,
+        apellidom: item.alumno.apellidoMaterno,
+        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
+        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        practica: item.ocasion,
+        estado: item.estado
+      })))})
+      .catch(error => {
+        console.error('Failed to fetch letters:', error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  React.useEffect(() => {
+    obtenerPostulacionesSinRevision();
+  }, []);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -67,7 +144,30 @@ export default function Tablaevaluaciones() {
   };
 
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    const updatedRows = rows.map(row =>
+      row.id === id ? { ...row, estado: "Rechazado" } : row
+    );
+    setRows(updatedRows);
+  };
+  
+
+  const handleAcceptClick = (id) => () => {
+    const updatedInitialRows = rows.map(row =>
+      row.id === id ? { ...row, estado: "Aceptada" } : row
+    );
+    setRows(updatedInitialRows);
+  };
+
+  const handleSinAccionClick = () => {
+    obtenerPostulacionesSinRevision();
+    const filteredRows = rows.filter(row => row.estado === "Sin acción");
+    setRows(filteredRows);
+  };
+
+  const handleRechazadasClick = () => {
+    obtenerPostulacionesRechazadas();
+    const filteredRows = rows.filter(row => row.estado === "Rechazada");
+    setRows(filteredRows);
   };
 
   const handleCancelClick = (id) => () => {
@@ -162,7 +262,7 @@ export default function Tablaevaluaciones() {
           <GridActionsCellItem
             icon={<CheckBoxSharpIcon sx={{ color: "green" }} />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={handleAcceptClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
@@ -190,16 +290,18 @@ export default function Tablaevaluaciones() {
       }}
     >
       <Box sx={{ display: "flex", padding: 2 }}>
-        <Button variant="contained" color="success" sx={{ mr: 2 }}>
+        <Button variant="contained" color="success" sx={{ mr: 2 }} onClick={handleSinAccionClick}>
           Sin acción
         </Button>
         <Button
+          onClick={handleRechazadasClick}
           variant="contained"
           sx={{
             mr: 2,
             backgroundColor: "#86110e", // Replace with your custom color
             "&:hover": {
               backgroundColor: "#3f0605", // Replace with a darker shade for hover effect
+            
             },
           }}
         >
