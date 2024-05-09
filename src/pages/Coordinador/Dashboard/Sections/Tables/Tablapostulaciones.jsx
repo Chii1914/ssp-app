@@ -1,4 +1,5 @@
 import * as React from "react";
+import Cookies from "js-cookie";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,15 +20,17 @@ import {
   randomId,
   randomArrayItem,
 } from "@mui/x-data-grid-generator";
+import axios from "axios";
 
 const roles = ["Market", "Finance", "Development"];
 const randomRole = () => {
   return randomArrayItem(roles);
 };
 
-const API_BASE_URL_SR = 'http://localhost:3000/api/practicas/sn-rev/';
+const API_BASE_URL_SR = 'http://localhost:3000/api/practicas/sn-rev';
+const API_BASE_URL_R = 'http://localhost:3000/api/practicas/rev-rech';
 
-const initialRows = [
+/*const initialRows = [
   {
     id: randomId(),
     run: "12345678-9",
@@ -62,9 +65,7 @@ const initialRows = [
     estado: "Rechazada",
   }
 ];
-
-
-
+*/
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -79,10 +80,58 @@ function EditToolbar(props) {
   };
 }
 
-export default function Tablapostulaciones() {
+export default function Tablapostulaciones( region ) {
+
   const [loading, setLoading] = React.useState(false);
-  const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
+
+
+  const obtenerPostulacionesSinRevision = async () => {
+    setLoading(true);
+    await axios.get(`${API_BASE_URL_SR}/${region}`, 
+    {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
+      .then(data => { setRows(data.data.map(item => ({ 
+        id: item.id,
+        run: item.alumno.run,
+        nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
+        apellidop: item.alumno.apellidoPaterno,
+        apellidom: item.alumno.apellidoMaterno,
+        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
+        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        practica: item.ocasion,
+        estado: item.estado
+      })))})
+      .catch(error => {
+        console.error('Failed to fetch letters:', error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  const obtenerPostulacionesRechazadas = async () => {
+    setLoading(true);
+    await axios.get(`${API_BASE_URL_R}/${region}`, 
+    {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
+      .then(data => { setRows(data.data.map(item => ({
+        id: item.id,
+        run: item.alumno.run,
+        nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
+        apellidop: item.alumno.apellidoPaterno,
+        apellidom: item.alumno.apellidoMaterno,
+        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
+        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        practica: item.ocasion,
+        estado: item.estado
+      })))})
+      .catch(error => {
+        console.error('Failed to fetch letters:', error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  React.useEffect(() => {
+    obtenerPostulacionesSinRevision();
+  }, []);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -95,27 +144,29 @@ export default function Tablapostulaciones() {
   };
 
   const handleDeleteClick = (id) => () => {
-    const updatedInitialRows = initialRows.map(row =>
+    const updatedRows = rows.map(row =>
       row.id === id ? { ...row, estado: "Rechazado" } : row
     );
-    setRows(updatedInitialRows);
+    setRows(updatedRows);
   };
   
 
   const handleAcceptClick = (id) => () => {
-    const updatedInitialRows = initialRows.map(row =>
+    const updatedInitialRows = rows.map(row =>
       row.id === id ? { ...row, estado: "Aceptada" } : row
     );
     setRows(updatedInitialRows);
   };
 
   const handleSinAccionClick = () => {
-    const filteredRows = initialRows.filter(row => row.estado === "Sin acción");
+    obtenerPostulacionesSinRevision();
+    const filteredRows = rows.filter(row => row.estado === "Sin acción");
     setRows(filteredRows);
   };
 
   const handleRechazadasClick = () => {
-    const filteredRows = initialRows.filter(row => row.estado === "Rechazada");
+    obtenerPostulacionesRechazadas();
+    const filteredRows = rows.filter(row => row.estado === "Rechazada");
     setRows(filteredRows);
   };
 

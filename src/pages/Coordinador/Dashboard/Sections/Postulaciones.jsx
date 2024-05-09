@@ -10,6 +10,7 @@ import Tablaevaluaciones from "./Tables/Tablaevaluaciones";
 function Postulaciones() {
   const [activeTable, setActiveTable] = useState(null);
   const [showTransition, setShowTransition] = useState(false);
+  const region = 'Valparaíso';
 
   useEffect(() => {
     if (activeTable) {
@@ -86,8 +87,8 @@ function Postulaciones() {
             transition: 'opacity 0.5s ease-in-out',
           }}
         >
-          {activeTable === "postulaciones" && <Tablapostulaciones />}
-          {activeTable === "evaluaciones" && <Tablaevaluaciones />}
+          {activeTable === "postulaciones" && <Tablapostulaciones region = {region}/>}
+          {activeTable === "evaluaciones" && <Tablaevaluaciones region = {region} />}
         </Box>
       </Box>
         </Box>
