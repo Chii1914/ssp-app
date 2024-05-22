@@ -10,7 +10,7 @@ import Tablaevaluaciones from "./Tables/Tablaevaluaciones";
 function Postulaciones() {
   const [activeTable, setActiveTable] = useState(null);
   const [showTransition, setShowTransition] = useState(false);
-  const region = 'Valparaíso';
+  const region = 'Valparaiso';
 
   useEffect(() => {
     if (activeTable) {

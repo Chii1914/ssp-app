@@ -27,45 +27,8 @@ const randomRole = () => {
   return randomArrayItem(roles);
 };
 
-const API_BASE_URL_SR = 'http://localhost:3000/api/practicas/sn-rev';
-const API_BASE_URL_R = 'http://localhost:3000/api/practicas/rev-rech';
-
-/*const initialRows = [
-  {
-    id: randomId(),
-    run: "12345678-9",
-    nombre: "Jacinta ",
-    apellidop: "Mayo",
-    apellidom: "Perez",
-    fsolicitud: "Día 9-12-2023 \nHora 12:00",
-    factualizacion: "Día 13-12-2023 \nHora 13:00",
-    practica: "Segunda",
-    estado: "Sin acción",
-  },
-  {
-    id: randomId(),
-    run: "11111111-1",
-    nombre: "user2 ",
-    apellidop: "user2",
-    apellidom: "user2",
-    fsolicitud: "Día 11-09-2023 \nHora 12:00",
-    factualizacion: "Día 13-12-2023 \nHora 13:00",
-    practica: "Segunda",
-    estado: "Sin acción",
-  },
-  {
-    id: randomId(),
-    run: "11111111-2",
-    nombre: "user3 ",
-    apellidop: "user3",
-    apellidom: "user3",
-    fsolicitud: "Día 22-04-2024 \nHora 13:00",
-    factualizacion: "Día 23-05-2024 \nHora 14:00",
-    practica: "Primera",
-    estado: "Rechazada",
-  }
-];
-*/
+const API_BASE_URL_SR = 'http://localhost:3000/api/practica/sn-rev';
+const API_BASE_URL_R = 'http://localhost:3000/api/practica/rev-rech';
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -86,10 +49,9 @@ export default function Tablapostulaciones( region ) {
   const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
 
-
   const obtenerPostulacionesSinRevision = async () => {
     setLoading(true);
-    await axios.get(`${API_BASE_URL_SR}/${region}`, 
+    await axios.get(`${API_BASE_URL_SR}/${region.region}`, 
     {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
       .then(data => { setRows(data.data.map(item => ({ 
         id: item.id,
@@ -97,8 +59,8 @@ export default function Tablapostulaciones( region ) {
         nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
         apellidop: item.alumno.apellidoPaterno,
         apellidom: item.alumno.apellidoMaterno,
-        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
-        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        fsolicitud: new Date(item.fechaCreado).toLocaleString(),
+        factualizacion: new Date(item.fechaCambioEstado).toLocaleString(),
         practica: item.ocasion,
         estado: item.estado
       })))})
@@ -110,7 +72,7 @@ export default function Tablapostulaciones( region ) {
 
   const obtenerPostulacionesRechazadas = async () => {
     setLoading(true);
-    await axios.get(`${API_BASE_URL_R}/${region}`, 
+    await axios.get(`${API_BASE_URL_R}/${region.region}`, 
     {headers: {Authorization: `Bearer ${Cookies.get("token")}`}})
       .then(data => { setRows(data.data.map(item => ({
         id: item.id,
@@ -118,8 +80,8 @@ export default function Tablapostulaciones( region ) {
         nombre: `${item.alumno.primerNombre} ${item.alumno.segundoNombre}`.trim(),
         apellidop: item.alumno.apellidoPaterno,
         apellidom: item.alumno.apellidoMaterno,
-        fsolicitud: new Date(item.fecha_creado).toLocaleString(),
-        factualizacion: new Date(item.fecha_cambio_estado).toLocaleString(),
+        fsolicitud: new Date(item.fechaCreado).toLocaleString(),
+        factualizacion: new Date(item.fechaCambioEstado).toLocaleString(),
         practica: item.ocasion,
         estado: item.estado
       })))})

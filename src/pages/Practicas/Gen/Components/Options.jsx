@@ -44,6 +44,9 @@ export default function Options() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [ModalOpen, setModalOpen] = React.useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   const [inputs, setInputs] = useState({
     primerNombre: "",
@@ -126,20 +129,26 @@ export default function Options() {
     return;
   };
 
+
+  const handleButtonClickGenerica = async () => {
+    setIsButtonDisabled(true);
+    handleModalClose();
+    await generarCartaGenerica();
+    setIsButtonDisabled(false);
+    window.location.reload();
+  };
+  
   const handleButtonClick = async (actionName) => {
     switch (actionName) {
       case "cartaGenerica":
-        setIsButtonDisabled(true);
-        await generarCartaGenerica();
-        setIsButtonDisabled(false);
-        window.location.reload();
-        break;
+        handleModalOpen();
+       
       case "cartaPersonalizada":
-        setIsButtonDisabled(true);
+        /*setIsButtonDisabled(true);
         await generarCartaPersonalizada();
         setIsButtonDisabled(false);
         window.location.reload();
-        break;
+        break;*/
       case "postulacionPrimera":
         console.log("prim");
         break;
@@ -149,7 +158,7 @@ export default function Options() {
       default:
         console.log("first");
     }
-    console.log(`Action ${actionName} triggered`);
+    //console.log(`Action ${actionName} triggered`);
   };
 
   const updateInformation = async () => {
@@ -450,6 +459,12 @@ export default function Options() {
                       control={<Radio />}
                       label="Hombre"
                     />
+
+                    <FormControlLabel
+                      value="Otro"
+                      control={<Radio />}
+                      label="No Especifica"
+                    />
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={6}>
@@ -694,6 +709,48 @@ export default function Options() {
                   >
                     {tier.buttonText}
                   </Button>
+                  <Modal open={ModalOpen} onClose={handleModalClose}>
+                    <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Seleccione Último Semestre Aprobado
+                      </Typography>
+                      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        Seleccione el último semestre que usted aprobó antes de generar la carta
+                      </Typography>
+                      <Box sx={{ mt: 2 }}>
+                        <Select
+                          labelId="ultimoSemAprobado"
+                          id="ultimoSemAprobado"
+                          value={inputs.ultimoSemAprobado}
+                          label="Último Semestre Aprobado"
+                          name="ultimoSemAprobado"
+                          onChange={handleChange}
+                        >
+                          <MenuItem value="Primer Semestre">Primer Semestre</MenuItem>
+                          <MenuItem value="Segundo Semestre">Segundo Semestre</MenuItem>
+                          <MenuItem value="Tercer Semestre">Tercer Semestre</MenuItem>
+                          <MenuItem value="Cuarto Semestre">Cuarto Semestre</MenuItem>
+                          <MenuItem value="Quinto Semestre">Quinto Semestre</MenuItem>
+                          <MenuItem value="Sexto Semestre">Sexto Semestre</MenuItem>
+                          <MenuItem value="Séptimo Semestre">Séptimo Semestre</MenuItem>
+                          <MenuItem value="Octavo Semestre">Octavo Semestre</MenuItem>
+                          <MenuItem value="Noveno Semestre">Noveno Semestre</MenuItem>
+                          <MenuItem value="Décimo Semestre">Décimo Semestre</MenuItem>
+                        </Select>
+                      </Box>
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          onClick={handleButtonClickGenerica}
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          sx={{ mt: 3, mb: 2 }}
+                        >
+                          Generar Carta Genérica
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
                 </CardActions>
               </Card>
             </Grid>
@@ -710,5 +767,8 @@ export default function Options() {
         </Box>
       </Container>
     </ThemeProvider>
+
+    
+
   );
 }
