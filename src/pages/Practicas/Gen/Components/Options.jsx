@@ -29,24 +29,101 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
-import { parse } from "@fortawesome/fontawesome-svg-core";
-//Todo function to validate token
-
 const defaultTheme = createTheme();
-
-//TODO USSEFFECTS PARA LAS COSITAS
 
 export default function Options() {
   const [ct_cg, setCg] = useState(null);
   const [ct_cp, setCp] = useState(null);
-  const [data, setData] = useState(null);
+  const [counters, setCounters] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  //Modal mofidicación de datos
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [ModalOpen, setModalOpen] = React.useState(false);
+  //Modal modificación cartas
+  const [ModalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+
+  //Modal modificación prácticas
+  const [modalPr, setModalPrOpen] = useState(false);
+  const handleModalPrOpen = () => setModalPrOpen(true);
+  const handleModalPrClose = () => setModalPrOpen(false);
+
+  const [dataPractica, setDataPractica] = useState({
+    horario: {
+      //Esto tendrá ques ser hecho en el front mejor, la wea de restar horas y sumarlas
+      horaLunesMananaEntrada: "06:00",
+      horaLunesMananaSalida: "14:00",
+      horaLunesTardeEntrada: "15:00",
+      horaLunesTardeSalida: "18:00",
+      totalLunes: "",
+
+      horaMartesMananaEntrada: "",
+      horaMartesMananaSalida: "",
+      horaMartesTardeEntrada: "",
+      horaMartesTardeSalida: "",
+      totalMartes: "",
+
+      horaMiercolesMananaEntrada: "",
+      horaMiercolesMananaSalida: "",
+      horaMiercolesTardeEntrada: "",
+      horaMiercolesTardeSalida: "",
+      totalMiercoles: "",
+
+      horaJuevesMananaEntrada: "",
+      horaJuevesMananaSalida: "",
+      horaJuevesTardeEntrada: "",
+      horaJuevesTardeSalida: "",
+      totalJueves: "",
+
+      horaViernesMananaEntrada: "",
+      horaViernesMananaSalida: "",
+      horaViernesTardeEntrada: "",
+      horaViernesTardeSalida: "",
+      totalViernes: "",
+
+      horaSabadoMananaEntrada: "",
+      horaSabadoMananaSalida: "",
+      horaSabadoTardeEntrada: "",
+      horaSabadoTardeSalida: "",
+      totalSabado: "",
+
+      horaDomingoMananaEntrada: "",
+      horaDomingoMananaSalida: "",
+      horaDomingoTardeEntrada: "",
+      horaDomingoTardeSalida: "",
+      totalDomingo: "",
+
+      totalHoras: "45",
+    },
+    createOrganismo: {
+      nombreOrganismo: "Yoel",
+      direccion: "los aa",
+      regionId: 1, //Estas dos son cadenas las cuales
+      otraRegion: "",
+      comunaId: 1, //Son clave primaria de la región y conuna de una ciudad respectivamente,
+      otraComuna: "",
+      telefono: 22222, //Validar esta data también
+      divisionDepartamento: "Dpto",
+      seccionUnidad: "Unidad",
+    },
+    createSupervisor: {
+      nombre: "Yoel",
+      cargo: "Cargo",
+      correo: "correo@gmail.com", //Luego validar estos datos,
+    },
+    practica: {
+      ocacion: "primera",
+      descripcion: "yapp",
+      homologacion: true,
+      fechaInicio: "2020-11-02",
+      fechaTermino: "2020-11-03",
+    },
+    semestre: {
+      ultimoSemAprobado: "Noveno Semestre",
+    },
+  });
 
   const [inputs, setInputs] = useState({
     primerNombre: "",
@@ -93,11 +170,21 @@ export default function Options() {
     setInputs({ ...inputs, [name]: value });
   };
 
+  const generarPrimeraPractica = async () => {
+    try {
+      alert("generao");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const generarCartaGenerica = async () => {
     try {
       const response = await axios.post(
         `http://localhost:3000/api/cartas-gen/crear`,
-        {},
+        {
+          semestre: inputs.ultimoSemAprobado,
+        },
         {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
@@ -129,7 +216,6 @@ export default function Options() {
     return;
   };
 
-
   const handleButtonClickGenerica = async () => {
     setIsButtonDisabled(true);
     handleModalClose();
@@ -137,20 +223,30 @@ export default function Options() {
     setIsButtonDisabled(false);
     window.location.reload();
   };
-  
+
+  const handleButtonClickPrimera = async () => {
+    setIsButtonDisabled(true);
+    handleModalPrClose();
+    await generarPrimeraPractica();
+    setIsButtonDisabled(false);
+    window.location.reload();
+  };
+
   const handleButtonClick = async (actionName) => {
     switch (actionName) {
       case "cartaGenerica":
         handleModalOpen();
-       
+        break;
       case "cartaPersonalizada":
-        /*setIsButtonDisabled(true);
+      /*setIsButtonDisabled(true);
         await generarCartaPersonalizada();
         setIsButtonDisabled(false);
         window.location.reload();
         break;*/
+        console.log("peronalizada")
+        break;
       case "postulacionPrimera":
-        console.log("prim");
+        handleModalPrOpen();
         break;
       case "postulacionSegunda":
         console.log("seg");
@@ -280,6 +376,7 @@ export default function Options() {
             },
           }
         );
+        console.log("flag")
         if (response.data == 0) {
           setCp("0");
         } else {
@@ -292,52 +389,72 @@ export default function Options() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/practica/`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          }
+        );
+        setCounters(response.data)
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const tiers = [
-    {
-      title: "Carta Genérica",
-      subheader: `Solicitado ${ct_cg} veces`,
+  {
+    title: "Carta Genérica",
+    subheader: `Solicitado ${ct_cg} veces`,
+    description: [
+      "Se generará automáticamente su Carta genérica. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud.",
+    ],
+    buttonText: "Generar",
+    buttonVariant: "contained",
+    actionName: "cartaGenerica",
+    disabled: false, // Assuming no special condition for disabling this button
+  },
+  {
+    title: "Carta Personalizada",
+    subheader: `Solicitado ${ct_cp} veces`,
+    description: [
+      "Deberá rellenar el formulario para poder genererar la solicitud de Carta Personalizada. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud.",
+    ],
+    buttonText: "Generar",
+    buttonVariant: "contained",
+    actionName: "cartaPersonalizada",
+    disabled: false, // Assuming no special condition for disabling this button
+  },
+  {
+    title: "Postulación Primera Práctica",
+    subheader: `Solicitado ${counters ? counters["contadores"]["sin_accion"] : 0} veces`,
+    description: [
+      "Formulario de postulación para su primera práctica profesional.",
+    ],
+    buttonText: "Generar",
+    buttonVariant: "contained",
+    actionName: "postulacionPrimera",
+    disabled: counters && counters["contadores"]["sin_accion"] >= 3, // Disable if solicited 3 or more times
+  },
+  {
+    title: "Postulación Segunda Práctica",
+    subheader: "Solicitado # veces",
+    description: [
+      "Formulario de postulación para su segunda práctica profesional.",
+    ],
+    buttonText: "Generar",
+    buttonVariant: "contained",
+    actionName: "postulacionSegunda",
+    disabled: false, // Assuming no special condition for disabling this button
+  },
+];
 
-      description: [
-        "Se generará automáticamente su Carta genérica. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud.",
-      ],
-      buttonText: "Generar",
-      buttonVariant: "contained",
-      actionName: "cartaGenerica",
-    },
-    {
-      title: "Carta Personalizada",
-      subheader: `Solicitado ${ct_cp} veces`,
-
-      description: [
-        "Deberá rellenar el formulario para poder genererar la solicitud de Carta Personalizada. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud.",
-      ],
-      buttonText: "Generar",
-      buttonVariant: "contained",
-      actionName: "cartaPersonalizada",
-    },
-    {
-      title: "Postulación Primera Práctica",
-      subheader: "Solicitado # veces",
-      price: "Ver postulaciones",
-      description: [
-        "Formulario de postulación para su primera práctica profesional.",
-      ],
-      buttonText: "Generar",
-      buttonVariant: "contained",
-      actionName: "postulacionPrimera",
-    },
-    {
-      title: "Postulación Segunda Práctica",
-      subheader: "Solicitado # veces",
-      price: "Ver postulaciones",
-      description: [
-        "Formulario de postulación para su segunda práctica profesional.",
-      ],
-      buttonText: "Generar",
-      buttonVariant: "contained",
-      actionName: "postulacionSegunda",
-    },
-  ];
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -702,20 +819,26 @@ export default function Options() {
                 </CardContent>
                 <CardActions sx={{ mb: 2 }}>
                   <Button
-                    disabled={isButtonDisabled}
+                    disabled={tier.disabled || isButtonDisabled}
                     fullWidth
                     variant={tier.buttonVariant}
                     onClick={() => handleButtonClick(tier.actionName)}
                   >
                     {tier.buttonText}
                   </Button>
-                  <Modal open={ModalOpen} onClose={handleModalClose}>
+                  <Modal open={modalPr} onClose={handleModalPrClose}>
                     <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
-                      <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Seleccione Último Semestre Aprobado
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                      >
+                        Formulario para postulación a práctica profesional
                       </Typography>
                       <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Seleccione el último semestre que usted aprobó antes de generar la carta
+                        Este formulario se puede enviar una sola vez. En el caso
+                        de cometer un error en los datos o querer revisarlo, se
+                        debe dirigir a la oficina del coordinador de prácticas.
                       </Typography>
                       <Box sx={{ mt: 2 }}>
                         <Select
@@ -726,16 +849,103 @@ export default function Options() {
                           name="ultimoSemAprobado"
                           onChange={handleChange}
                         >
-                          <MenuItem value="Primer Semestre">Primer Semestre</MenuItem>
-                          <MenuItem value="Segundo Semestre">Segundo Semestre</MenuItem>
-                          <MenuItem value="Tercer Semestre">Tercer Semestre</MenuItem>
-                          <MenuItem value="Cuarto Semestre">Cuarto Semestre</MenuItem>
-                          <MenuItem value="Quinto Semestre">Quinto Semestre</MenuItem>
-                          <MenuItem value="Sexto Semestre">Sexto Semestre</MenuItem>
-                          <MenuItem value="Séptimo Semestre">Séptimo Semestre</MenuItem>
-                          <MenuItem value="Octavo Semestre">Octavo Semestre</MenuItem>
-                          <MenuItem value="Noveno Semestre">Noveno Semestre</MenuItem>
-                          <MenuItem value="Décimo Semestre">Décimo Semestre</MenuItem>
+                          <MenuItem value="Primer Semestre">
+                            Primer Semestre
+                          </MenuItem>
+                          <MenuItem value="Segundo Semestre">
+                            Segundo Semestre
+                          </MenuItem>
+                          <MenuItem value="Tercer Semestre">
+                            Tercer Semestre
+                          </MenuItem>
+                          <MenuItem value="Cuarto Semestre">
+                            Cuarto Semestre
+                          </MenuItem>
+                          <MenuItem value="Quinto Semestre">
+                            Quinto Semestre
+                          </MenuItem>
+                          <MenuItem value="Sexto Semestre">
+                            Sexto Semestre
+                          </MenuItem>
+                          <MenuItem value="Séptimo Semestre">
+                            Séptimo Semestre
+                          </MenuItem>
+                          <MenuItem value="Octavo Semestre">
+                            Octavo Semestre
+                          </MenuItem>
+                          <MenuItem value="Noveno Semestre">
+                            Noveno Semestre
+                          </MenuItem>
+                          <MenuItem value="Décimo Semestre">
+                            Décimo Semestre
+                          </MenuItem>
+                        </Select>
+                      </Box>
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          onClick={handleButtonClickPrimera}
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          sx={{ mt: 3, mb: 2 }}
+                        >
+                          Generar Primera Práctica
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
+                  <Modal open={ModalOpen} onClose={handleModalClose}>
+                    <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                      >
+                        Seleccione Último Semestre Aprobado
+                      </Typography>
+                      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        Seleccione el último semestre que usted aprobó antes de
+                        generar la carta
+                      </Typography>
+                      <Box sx={{ mt: 2 }}>
+                        <Select
+                          labelId="ultimoSemAprobado"
+                          id="ultimoSemAprobado"
+                          value={inputs.ultimoSemAprobado}
+                          label="Último Semestre Aprobado"
+                          name="ultimoSemAprobado"
+                          onChange={handleChange}
+                        >
+                          <MenuItem value="Primer Semestre">
+                            Primer Semestre
+                          </MenuItem>
+                          <MenuItem value="Segundo Semestre">
+                            Segundo Semestre
+                          </MenuItem>
+                          <MenuItem value="Tercer Semestre">
+                            Tercer Semestre
+                          </MenuItem>
+                          <MenuItem value="Cuarto Semestre">
+                            Cuarto Semestre
+                          </MenuItem>
+                          <MenuItem value="Quinto Semestre">
+                            Quinto Semestre
+                          </MenuItem>
+                          <MenuItem value="Sexto Semestre">
+                            Sexto Semestre
+                          </MenuItem>
+                          <MenuItem value="Séptimo Semestre">
+                            Séptimo Semestre
+                          </MenuItem>
+                          <MenuItem value="Octavo Semestre">
+                            Octavo Semestre
+                          </MenuItem>
+                          <MenuItem value="Noveno Semestre">
+                            Noveno Semestre
+                          </MenuItem>
+                          <MenuItem value="Décimo Semestre">
+                            Décimo Semestre
+                          </MenuItem>
                         </Select>
                       </Box>
                       <Box sx={{ mt: 2 }}>
@@ -767,8 +977,5 @@ export default function Options() {
         </Box>
       </Container>
     </ThemeProvider>
-
-    
-
   );
 }
