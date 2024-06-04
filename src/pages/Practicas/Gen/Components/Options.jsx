@@ -156,24 +156,28 @@ export default function Options() {
 
 
   const handleButtonClickGenerica = async () => {
-    handleModalClose();
-    handleLoading();
-    setIsButtonDisabled(true);
-    await generarCartaGenerica();
-    handleLoadingClose();
-    setIsButtonDisabled(false);
-    //window.location.reload();
+    if(!(modalGenericas.ultimoSemAprobado === "")){
+      handleModalClose();
+      handleLoading();
+      setIsButtonDisabled(true);
+      await generarCartaGenerica();
+      handleLoadingClose();
+      setIsButtonDisabled(false);
+      //window.location.reload();
+    }
   };
 
   const handleButtonClickPersonalizada = async () => {
-    console.log(personalizada);
-    handleModalPersClose();
-    handleLoading();
-    setIsButtonDisabled(true);
-    await generarCartaPersonalizada();
-    handleLoadingClose();
-    setIsButtonDisabled(false);
-    //window.location.reload();
+    if (!(personalizada.nombreOrganismo === "" || personalizada.nombreSupervisor === "" || personalizada.cargoSupervisor === "" || personalizada.divisionDepartamento === "" || personalizada.seccionUnidad === "" || personalizada.sexoSupervisor === "" || personalizada.ultimoSemAprobado === "" || personalizada.sexoSupervisor === "")){  
+      console.log(personalizada);
+      handleModalPersClose();
+      handleLoading();
+      setIsButtonDisabled(true);
+      await generarCartaPersonalizada();
+      handleLoadingClose();
+      setIsButtonDisabled(false);
+      //window.location.reload();
+    }   
   };
 
   const handleButtonClick = async (actionName) => {
