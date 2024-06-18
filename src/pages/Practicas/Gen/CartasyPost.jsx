@@ -1,5 +1,5 @@
 import React from 'react'
-import Options from './Components/Options'
+import Options from './Options'
 import { Box } from '@mui/system'
 
 const CartasyPosts = () => {
