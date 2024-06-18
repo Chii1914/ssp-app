@@ -258,6 +258,7 @@ export default function Options() {
   };
 
   const updateInformation = async () => {
+    console.log(inputs)
     try {
       inputs.run = parseInt(inputs.run);
       const response = await axios.patch(
@@ -269,17 +270,15 @@ export default function Options() {
           },
         }
       );
-      // Handle response or further actions
+      window.location.reload();
     } catch (error) {
       console.error("Error updating information:", error);
-      // Handle error
     }
-    //Realizar método patch para actualizar persona, dejar en claro que si falta uno de los inputs, la wea no se debe actualizar
-    return;
   };
 
   const handleSubmit = async (e) => {
-    updateInformation();
+    e.preventDefault();
+    await updateInformation();
   };
 
   useEffect(() => {
