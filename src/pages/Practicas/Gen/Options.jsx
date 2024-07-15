@@ -8,7 +8,6 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -22,6 +21,10 @@ import FormModal from "./Components/FormModal";
 import Header from "./Components/Header";
 import { fetchData, fetchCtGen, fetchCtPer, fetchPractica } from "./utils/fetchData";
 import { generarCartaGenerica, generarCartaPersonalizada, generarPrimeraPractica, updateInformation } from "./utils/api";
+import ModalPrimeraPractica from "./Components/PrimeraPracticaModal";
+import dayjs from "dayjs";
+
+//const initialTime = dayjs().set('hour', 8).set('minute', 0); // Ejemplo de hora inicial: 08:00 AM
 
 const defaultTheme = createTheme();
 
@@ -53,10 +56,90 @@ const Options = () => {
     ultimoSemAprobado: "",
   });
 
+  const[postulacion, setPostulacion] = useState({
+    practica: "",
+    ultimoSemAprobado: "",
+    homologacion: false,
+    nombreOrganismo: "",
+    nombreSupervisor: "",
+    cargoSupervisor: "",
+    correoSupervisor: "",
+    telefonoSupervisor: "",
+    divisionDepartamento: "",
+    direccionOrganismo: "",
+    seccionUnidad: "",
+    region: "",
+    comuna: "",
+    fechaInicio: null,
+    fechaTermino: null,
+    descripcion: "",
+  });
+
+  const [horario, setHorario] = useState({
+    lunes: {
+      manana: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      tarde: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      horas_totales: 0,
+    },
+    martes: {
+      manana: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      tarde: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      horas_totales: 0,
+    },
+    miercoles: {
+      manana: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      tarde: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      horas_totales: 0,
+    },
+    jueves: {
+      manana: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      tarde: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      horas_totales: 0,
+    },
+    viernes: {
+      manana: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      tarde: {
+        horaInicio: null,
+        horaTermino: null,
+      },
+      horas_totales: 0,
+    },
+    horas_semanales: 0,
+  });
+  
+  
+
   const [carta_generica, setCartaGenerica] = useState({
     ultimoSemAprobado: "",
   });
-
+  
   const [personalizada, setPersonalizada] = useState({
     ultimoSemAprobado: "",
     nombreOrganismo: "",
@@ -73,7 +156,7 @@ const Options = () => {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "80%",
-    maxWidth: "800px",
+    maxWidth: "850px",
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -97,6 +180,75 @@ const Options = () => {
     setPersonalizada({ ...personalizada, [name]: value });
   };
 
+  const handleChangePr = (event) => {
+    const { name, value, type, checked } = event.target;
+    setPostulacion(prevState => ({
+        ...prevState,
+        [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+  
+  const handleChangeHorario = (dia, periodo, tipo, nuevaHora) => {
+    // Actualizar el horario con la nueva hora ingresada
+    setHorario((prevHorario) => {
+      // Calcula las nuevas horas
+      const nuevoHorario = {
+        ...prevHorario,
+        [dia]: {
+          ...prevHorario[dia],
+          [periodo]: {
+            ...prevHorario[dia][periodo],
+            [tipo]: nuevaHora,
+          },
+        },
+      };
+  
+      // Calcula las horas totales del día
+      let horasTotalesDia = 0;
+  
+      // Suma las horas de la mañana si están definidas
+      if (nuevoHorario[dia].manana.horaInicio && nuevoHorario[dia].manana.horaTermino) {
+        const horaInicioManana = dayjs(nuevoHorario[dia].manana.horaInicio, 'HH:mm');
+        const horaTerminoManana = dayjs(nuevoHorario[dia].manana.horaTermino, 'HH:mm');
+        const horasManana = horaTerminoManana.diff(horaInicioManana, 'hours', true);
+        horasTotalesDia += horasManana;
+      }
+  
+      // Suma las horas de la tarde si están definidas
+      if (nuevoHorario[dia].tarde.horaInicio && nuevoHorario[dia].tarde.horaTermino) {
+        const horaInicioTarde = dayjs(nuevoHorario[dia].tarde.horaInicio, 'HH:mm');
+        const horaTerminoTarde = dayjs(nuevoHorario[dia].tarde.horaTermino, 'HH:mm');
+        const horasTarde = horaTerminoTarde.diff(horaInicioTarde, 'hours', true);
+        horasTotalesDia += horasTarde;
+      }
+  
+      // Actualiza las horas totales del día en el estado
+      const updatedHorario = {
+        ...nuevoHorario,
+        [dia]: {
+          ...nuevoHorario[dia],
+          horas_totales: horasTotalesDia,
+        },
+      };
+  
+      // Calcula las horas semanales totales
+      let horasTotalesSemanales = 0;
+      Object.keys(updatedHorario).forEach((key) => {
+        if (key !== 'horas_semanales') {
+          horasTotalesSemanales += updatedHorario[key].horas_totales;
+        }
+      });
+  
+      // Actualiza las horas semanales en el estado
+      return {
+        ...updatedHorario,
+        horas_semanales: horasTotalesSemanales,
+      };
+    });
+  };
+  
+  
+
   const handleButtonClickGenerica = async () => {
     setIsButtonDisabled(true);
     setModalOpen(false);
@@ -114,11 +266,12 @@ const Options = () => {
   };
 
   const handleButtonClickPrimera = async () => {
+    console.log(postulacion);
     setIsButtonDisabled(true);
     setModalPrOpen(false);
-    await generarPrimeraPractica();
+    await generarPrimeraPractica(postulacion);
     setIsButtonDisabled(false);
-    window.location.reload();
+    //window.location.reload();
   };
 
   const handleButtonClick = async (actionName) => {
@@ -130,10 +283,12 @@ const Options = () => {
         setModalPersOpen(true);
         break;
       case "postulacionPrimera":
+        setPostulacion({practica: "Primera"});
         setModalPrOpen(true);
         break;
       case "postulacionSegunda":
-        console.log("seg");
+        setPostulacion({practica: "Segunda"});
+        setModalPrOpen(true);
         break;
       default:
         console.log("first");
@@ -224,48 +379,19 @@ const Options = () => {
         handleSubmit={handleSubmit}
         style={style}
       />
-      <Modal open={modalPr} onClose={() => setModalPrOpen(false)}>
-        <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Formulario para postulación a práctica profesional
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Este formulario se puede enviar una sola vez. En el caso de cometer un error en los datos o querer revisarlo, se debe dirigir a la oficina del coordinador de prácticas.
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Select
-              labelId="ultimoSemAprobado"
-              id="ultimoSemAprobado"
-              value={inputs.ultimoSemAprobado}
-              label="Último Semestre Aprobado"
-              name="ultimoSemAprobado"
-              onChange={handleChange}
-            >
-              <MenuItem value="Primer Semestre">Primer Semestre</MenuItem>
-              <MenuItem value="Segundo Semestre">Segundo Semestre</MenuItem>
-              <MenuItem value="Tercer Semestre">Tercer Semestre</MenuItem>
-              <MenuItem value="Cuarto Semestre">Cuarto Semestre</MenuItem>
-              <MenuItem value="Quinto Semestre">Quinto Semestre</MenuItem>
-              <MenuItem value="Sexto Semestre">Sexto Semestre</MenuItem>
-              <MenuItem value="Séptimo Semestre">Séptimo Semestre</MenuItem>
-              <MenuItem value="Octavo Semestre">Octavo Semestre</MenuItem>
-              <MenuItem value="Noveno Semestre">Noveno Semestre</MenuItem>
-              <MenuItem value="Décimo Semestre">Décimo Semestre</MenuItem>
-            </Select>
-          </Box>
-          <Box sx={{ mt: 2 }}>
-            <Button
-              onClick={handleButtonClickPrimera}
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Generar Primera Práctica
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <ModalPrimeraPractica
+        open={modalPr}
+        handleClose={() => setModalPrOpen(false)}
+        handleChangePr={handleChangePr}
+        handleButtonClickPrimera={handleButtonClickPrimera}
+        postulacion={postulacion}
+        style={style}
+        setPostulacion={setPostulacion}
+        horario = {horario}
+        setHorario = {setHorario}
+        handleChangeHorario = {handleChangeHorario}
+      />
+
       <Modal open={ModalOpen} onClose={() => setModalOpen(false)}>
         <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -275,25 +401,20 @@ const Options = () => {
             Seleccione el último semestre que usted aprobó antes de generar la carta
           </Typography>
           <Box sx={{ mt: 2 }}>
-            <Select
+            <TextField
+              select
               labelId="ultimoSemAprobado"
               id="ultimoSemAprobado"
               value={carta_generica.ultimoSemAprobado}
               label="Último Semestre Aprobado"
               name="ultimoSemAprobado"
               onChange={handleChangeGenerica}
+              fullWidth
             >
-              <MenuItem value="Primer Semestre">Primer Semestre</MenuItem>
-              <MenuItem value="Segundo Semestre">Segundo Semestre</MenuItem>
-              <MenuItem value="Tercer Semestre">Tercer Semestre</MenuItem>
-              <MenuItem value="Cuarto Semestre">Cuarto Semestre</MenuItem>
-              <MenuItem value="Quinto Semestre">Quinto Semestre</MenuItem>
-              <MenuItem value="Sexto Semestre">Sexto Semestre</MenuItem>
-              <MenuItem value="Séptimo Semestre">Séptimo Semestre</MenuItem>
-              <MenuItem value="Octavo Semestre">Octavo Semestre</MenuItem>
-              <MenuItem value="Noveno Semestre">Noveno Semestre</MenuItem>
-              <MenuItem value="Décimo Semestre">Décimo Semestre</MenuItem>
-            </Select>
+              {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
+              <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
+              ))}
+            </TextField>
           </Box>
           <Box sx={{ mt: 2 }}>
             <Button
@@ -318,7 +439,8 @@ const Options = () => {
               Seleccione el último semestre que usted aprobó antes de generar la carta:
             </Typography>
             <Box sx={{ mt: 2 }}>
-              <Select
+              <TextField
+                select
                 labelId="ultimoSemAprobado"
                 id="ultimoSemAprobado"
                 value={personalizada.ultimoSemAprobado}
@@ -330,7 +452,7 @@ const Options = () => {
                 {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
                   <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
                 ))}
-              </Select>
+              </TextField>
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
@@ -425,6 +547,7 @@ const Options = () => {
           </Box>
         </Box>
       </Modal>
+
     </ThemeProvider>
   );
 };
