@@ -15,14 +15,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'; //npm install @mui/
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import CustomTable from './Tabla';
-import TimePickerValue from './TimePicker/TimePicker';
+import TimePickerValue from '../TimePicker/TimePicker';
 
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
 
-
-
-const ModalPrimeraPractica = ({ style, open, handleClose, handleChangePr, handleButtonClickPrimera, postulacion, setPostulacion , horario, handleChangeHorario, /*calcularSuma*/}) => {
+const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, handleButtonClickPostulacion, postulacion, setPostulacion , horario, handleChangeHorario, /*calcularSuma*/}) => {
 
   const data = [
     [
@@ -320,7 +318,7 @@ const ModalPrimeraPractica = ({ style, open, handleClose, handleChangePr, handle
 
           <Box sx={{ mt: 2 }}>
               <Button
-                  onClick={handleButtonClickPrimera}
+                  onClick={handleButtonClickPostulacion}
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -334,4 +332,4 @@ const ModalPrimeraPractica = ({ style, open, handleClose, handleChangePr, handle
     );
   };
   
-  export default ModalPrimeraPractica;
+  export default ModalPostulacionPractica;
