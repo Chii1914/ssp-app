@@ -14,7 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; //npm install @mui/x-date-pickers
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import CustomTable from './Tabla';
+import CustomTable from './TableHorario/Tabla';
 import TimePickerValue from '../TimePicker/TimePicker';
 
 dayjs.extend(localizedFormat);
@@ -315,7 +315,6 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
               />
             </Box>
           </Box>
-
           <Box sx={{ mt: 2 }}>
               <Button
                   onClick={handleButtonClickPostulacion}
