@@ -49,6 +49,23 @@ const CardComponent = ({ tier, isButtonDisabled, handleButtonClick }) => (
           </Typography>
         ))}
       </ul>
+      {(tier.title === "Postulación Primera Práctica" || tier.title === "Postulación Segunda Práctica") && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 2,
+          }}
+        >
+          <Button
+            variant="text"
+            color="primary"
+            onClick={() => tier.title === "Postulación Primera Práctica" ? handleButtonClick("verPostulacionesPrimera") : handleButtonClick("verPostulacionesSegunda")}
+          >
+            Ver Postulaciones
+          </Button>
+        </Box>
+      )}
     </CardContent>
     <CardActions sx={{ mb: 2 }}>
       <Button

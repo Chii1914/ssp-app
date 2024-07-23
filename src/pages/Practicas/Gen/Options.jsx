@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import IconButton from '@mui/material/IconButton';
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Cookies from "js-cookie";
@@ -18,6 +18,11 @@ import ModalPostulacionPractica from "./Components/Modals/PostulacionPracticaMod
 import ModalGenericas from "./Components/Modals/ModalGenericas";
 import ModalPersonalizadas from "./Components/Modals/ModalPersonalizadas";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import Menu from '@mui/material/Menu';
+import PostulacionesModal from "./Components/Modals/VerPostulaciones/PostulacionesModal";
+import { MenuItem, Icon} from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 //const initialTime = dayjs().set('hour', 8).set('minute', 0); // Ejemplo de hora inicial: 08:00 AM
 
@@ -29,9 +34,22 @@ const Options = () => {
   const [counters, setCounters] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+  const ITEM_HEIGHT = 48;
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   const [open, setOpen] = useState(false);
   const [ModalGenOpen, setModalGenOpen] = useState(false);
   const [modalPostulacion, setModalPostulacionOpen] = useState(false);
+  const [verPostulaciones, setVerPostulaciones] = useState(false);
 
   const [ModalPersOpen, setModalPersOpen] = useState(false);
 
@@ -51,85 +69,71 @@ const Options = () => {
     ultimoSemAprobado: "",
   });
 
-  const[postulacion, setPostulacion] = useState({
-    practica: "",
-    ultimoSemAprobado: "",
-    homologacion: false,
-    nombreOrganismo: "",
-    nombreSupervisor: "",
-    cargoSupervisor: "",
-    correoSupervisor: "",
-    telefonoSupervisor: "",
-    divisionDepartamento: "",
-    direccionOrganismo: "",
-    seccionUnidad: "",
-    region: "",
-    comuna: "",
-    fechaInicio: null,
-    fechaTermino: null,
-    descripcion: "",
-  });
+  const [practicas, setPracticas] = useState({
+    horario: {
+        totalHoras: "",
+        horaLunesMananaEntrada: "",
+        horaLunesMananaSalida: "",
+        horaLunesTardeEntrada: "",
+        horaLunesTardeSalida: "",
 
-  const [horario, setHorario] = useState({
-    lunes: {
-      manana: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      tarde: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      horas_totales: 0,
+        horaMartesMananaEntrada: "",
+        horaMartesMananaSalida: "",
+        horaMartesTardeEntrada: "",
+        horaMartesTardeSalida: "",
+
+        horaMiercolesMananaEntrada: "",
+        horaMiercolesMananaSalida: "",
+        horaMiercolesTardeEntrada: "",
+        horaMiercolesTardeSalida: "",
+
+        horaJuevesMananaEntrada: "",
+        horaJuevesMananaSalida: "",
+        horaJuevesTardeEntrada: "",
+        horaJuevesTardeSalida: "",
+
+        horaViernesMananaEntrada: "",
+        horaViernesMananaSalida: "",
+        horaViernesTardeEntrada: "",
+        horaViernesTardeSalida: "",
+
+        horaSabadoMananaEntrada: "",
+        horaSabadoMananaSalida: "",
+        horaSabadoTardeEntrada: "",
+        horaSabadoTardeSalida: "",
+
+        horaDomingoMananaEntrada: "",
+        horaDomingoMananaSalida: "",
+        horaDomingoTardeEntrada: "",
+        horaDomingoTardeSalida: ""
     },
-    martes: {
-      manana: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      tarde: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      horas_totales: 0,
+    createOrganismo: {
+        nombreOrganismo: "",
+        direccion: "",
+        regionId: 0,
+        otraRegion:"",
+        comunaId: 0,
+        otraComuna:"",
+        telefono: 0,
+        divisionDepartamento: "",
+        seccionUnidad: "",
     },
-    miercoles: {
-      manana: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      tarde: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      horas_totales: 0,
+    createSupervisor:{
+        nombre: "",
+        cargo: "",
+        correo: "",
     },
-    jueves: {
-      manana: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      tarde: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      horas_totales: 0,
+    practica: {
+        ocasion: "",
+        homologacion: false,
+        descripcion: "",
+        fechaInicio: "",
+        fechaTermino: "",
     },
-    viernes: {
-      manana: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      tarde: {
-        horaInicio: null,
-        horaTermino: null,
-      },
-      horas_totales: 0,
+    semestre: {
+        UltSem: "",
     },
-    horas_semanales: 0,
-  });
-  
-  
+});
 
   const [carta_generica, setCartaGenerica] = useState({
     ultimoSemAprobado: "",
@@ -145,6 +149,8 @@ const Options = () => {
     seccionUnidad: "",
   });
   
+ const [ocasion, setOcasion] = useState("");
+  
   const style = {
     position: "absolute",
     top: "50%",
@@ -158,7 +164,36 @@ const Options = () => {
     p: 4,
   };
 
+  const navigate = useNavigate();
   const email = jwtDecode(Cookies.get("token")).email;
+
+  const calcularHorasPorDia = (dia) => {
+    let minutosManana = 0;
+    let minutosTarde = 0;
+
+    if (practicas) {
+        if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
+            const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
+            const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
+            minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
+        }
+
+        if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
+            const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
+            const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
+            minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
+        }
+    }
+    return (minutosManana + minutosTarde) / 60;
+  };
+
+  const horasSemana = () => {
+    let horasTotalesSemanales = 0;
+    ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
+        horasTotalesSemanales += calcularHorasPorDia(dia);
+    });
+    return horasTotalesSemanales;
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -174,80 +209,62 @@ const Options = () => {
     const { name, value } = event.target;
     setPersonalizada({ ...personalizada, [name]: value });
   };
+ 
+  const handleChangePracticas = (e) => {
+    const { name, value, type, checked } = e.target;
+    const keys = name.split('.');
 
-  const handleChangePr = (event) => {
-    const { name, value, type, checked } = event.target;
-    setPostulacion(prevState => ({
-        ...prevState,
-        [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-  
-  const handleChangeHorario = (dia, periodo, tipo, nuevaHora) => {
-    // Actualizar el horario con la nueva hora ingresada
-    setHorario((prevHorario) => {
-      // Calcula las nuevas horas
-      const nuevoHorario = {
-        ...prevHorario,
-        [dia]: {
-          ...prevHorario[dia],
-          [periodo]: {
-            ...prevHorario[dia][periodo],
-            [tipo]: nuevaHora,
-          },
-        },
-      };
-  
-      // Calcula las horas totales del día
-      let horasTotalesDia = 0;
-  
-      // Suma las horas de la mañana si están definidas
-      if (nuevoHorario[dia].manana.horaInicio && nuevoHorario[dia].manana.horaTermino) {
-        const horaInicioManana = dayjs(nuevoHorario[dia].manana.horaInicio, 'HH:mm');
-        const horaTerminoManana = dayjs(nuevoHorario[dia].manana.horaTermino, 'HH:mm');
-        const horasManana = horaTerminoManana.diff(horaInicioManana, 'hours', true);
-        horasTotalesDia += horasManana;
+    setPracticas((currentPracticas) => {
+      let updatedState = { ...currentPracticas };
+
+      if (keys[0] === 'horario') {
+          updatedState.horario = {
+              ...updatedState.horario,
+              [keys[1]]: type === 'checkbox' ? checked : value
+          };
+
+          let horasTotalesSemanales = 0;
+          ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
+              let minutosManana = 0;
+              let minutosTarde = 0;
+
+              if (updatedState.horario[`hora${dia}MananaEntrada`] && updatedState.horario[`hora${dia}MananaSalida`]) {
+                  const horaInicioManana = dayjs(updatedState.horario[`hora${dia}MananaEntrada`], 'HH:mm');
+                  const horaTerminoManana = dayjs(updatedState.horario[`hora${dia}MananaSalida`], 'HH:mm');
+                  minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
+              }
+
+              if (updatedState.horario[`hora${dia}TardeEntrada`] && updatedState.horario[`hora${dia}TardeSalida`]) {
+                  const horaInicioTarde = dayjs(updatedState.horario[`hora${dia}TardeEntrada`], 'HH:mm');
+                  const horaTerminoTarde = dayjs(updatedState.horario[`hora${dia}TardeSalida`], 'HH:mm');
+                  minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
+              }
+
+              horasTotalesSemanales += (minutosManana + minutosTarde) / 60;
+          });
+
+          updatedState.horario.totalHoras = horasTotalesSemanales.toString();
+      } else {
+          if (keys.length === 1) {
+              // Si el campo es directamente una propiedad de practicas
+              updatedState[keys[0]] = value;
+          } else if (keys.length === 2) {
+              // Si el campo está anidado un nivel (por ejemplo, horario.totalHoras)
+              updatedState[keys[0]] = {
+                  ...updatedState[keys[0]],
+                  [keys[1]]: type === 'checkbox' ? checked : value
+              };
+          }
       }
-  
-      // Suma las horas de la tarde si están definidas
-      if (nuevoHorario[dia].tarde.horaInicio && nuevoHorario[dia].tarde.horaTermino) {
-        const horaInicioTarde = dayjs(nuevoHorario[dia].tarde.horaInicio, 'HH:mm');
-        const horaTerminoTarde = dayjs(nuevoHorario[dia].tarde.horaTermino, 'HH:mm');
-        const horasTarde = horaTerminoTarde.diff(horaInicioTarde, 'hours', true);
-        horasTotalesDia += horasTarde;
-      }
-  
-      // Actualiza las horas totales del día en el estado
-      const updatedHorario = {
-        ...nuevoHorario,
-        [dia]: {
-          ...nuevoHorario[dia],
-          horas_totales: horasTotalesDia,
-        },
-      };
-  
-      // Calcula las horas semanales totales
-      let horasTotalesSemanales = 0;
-      Object.keys(updatedHorario).forEach((key) => {
-        if (key !== 'horas_semanales') {
-          horasTotalesSemanales += updatedHorario[key].horas_totales;
-        }
-      });
-  
-      // Actualiza las horas semanales en el estado
-      return {
-        ...updatedHorario,
-        horas_semanales: horasTotalesSemanales,
-      };
+      return updatedState;
     });
   };
-  
+
   const handleButtonClickGenerica = async () => {
     setIsButtonDisabled(true);
     setModalGenOpen(false);
     await generarCartaGenerica(carta_generica.ultimoSemAprobado);
     setIsButtonDisabled(false);
-    window.location.reload();
   };
 
   const handleButtonClickPersonalizada = async () => {
@@ -255,15 +272,14 @@ const Options = () => {
     setModalPersOpen(false);
     await generarCartaPersonalizada(personalizada);
     setIsButtonDisabled(false);
-    window.location.reload();
   };
 
   const handleButtonClickPostulacion = async () => {
     setIsButtonDisabled(true);
     setModalPostulacionOpen(false);
-    await generarPrimeraPractica(postulacion,horario);
+    await generarPrimeraPractica(practicas);
+    console.log(practicas);
     setIsButtonDisabled(false);
-    //window.location.reload();
   };
 
   const handleButtonClick = async (actionName) => {
@@ -275,16 +291,29 @@ const Options = () => {
         setModalPersOpen(true);
         break;
       case "postulacionPrimera":
-        setPostulacion({practica: "Primera"});
+        setPracticas({ ...practicas, practica: { ...practicas.practica, ocasion: "Primera" } });
         setModalPostulacionOpen(true);
         break;
       case "postulacionSegunda":
-        setPostulacion({practica: "Segunda"});
+        setPracticas({ ...practicas, practica: { ...practicas.practica, ocasion: "Segunda" } });
         setModalPostulacionOpen(true);
+        break;
+      case "verPostulacionesPrimera":
+        setOcasion("Primera");
+        setVerPostulaciones(true);
+        break;
+      case "verPostulacionesSegunda":
+        setOcasion("Segunda");
+        setVerPostulaciones(true);
         break;
       default:
         console.log("first");
     }
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    navigate("/login");
   };
 
   const handleSubmit = async (e) => {
@@ -303,7 +332,7 @@ const Options = () => {
     {
       title: "Carta Genérica",
       subheader: `Solicitado ${ct_cg} veces`,
-      description: ["Se generará automáticamente su Carta genérica. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud."],
+      description: ["Se generará automáticamente su Carta genérica. Considere que ésta reemplazará a la más reciente que haya solicitado, creando nuevamente la solicitud."] ,
       buttonText: "Generar",
       buttonVariant: "contained",
       actionName: "cartaGenerica",
@@ -343,7 +372,45 @@ const Options = () => {
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }} />
       <CssBaseline />
       <Header />
-      <Button onClick={() => setOpen(true)}>Modificar data perfil</Button>
+
+      <IconButton
+        aria-label="menu"
+        sx={{ position: 'absolute', top: 16, left: 16 }} 
+        id="long-button"
+        color="inherit"
+        aria-controls={openMenu ? 'long-menu' : undefined}
+        aria-expanded={openMenu ? 'true' : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <IconButton 
+          color="primary"
+          aria-label="upload picture"
+          component="span"
+          >
+            <Icon>account_circle</Icon>
+        </IconButton>
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          'aria-labelledby': 'long-button',
+        }}
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: '22ch',
+          },
+        }}
+      >
+        <MenuItem onClick = {() => {setOpen (true)}}>Modificar Información</MenuItem>
+        <MenuItem onClick = {handleLogout}>Cerrar Sesión</MenuItem>
+      </Menu>
+
       <Container maxWidth={false} component="main">
         <Grid container spacing={2} alignItems="flex">
           {tiers.map((tier) => (
@@ -371,17 +438,11 @@ const Options = () => {
         handleSubmit={handleSubmit}
         style={style}
       />
-      <ModalPostulacionPractica
-        open={modalPostulacion}
-        handleClose={() => setModalPostulacionOpen(false)}
-        handleChangePr={handleChangePr}
-        handleButtonClickPostulacion={handleButtonClickPostulacion}
-        postulacion={postulacion}
-        style={style}
-        setPostulacion={setPostulacion}
-        horario = {horario}
-        setHorario = {setHorario}
-        handleChangeHorario = {handleChangeHorario}
+      <PostulacionesModal
+        style = {style}
+        open={verPostulaciones}
+        handleClose={() => setVerPostulaciones(false)}
+        ocasion = {ocasion}
       />
       <ModalGenericas
         style={style}
@@ -398,6 +459,17 @@ const Options = () => {
         personalizada={personalizada}
         handleChangePersonalizada={handleChangePersonalizada}
         handleButtonClickPersonalizada={handleButtonClickPersonalizada}
+      />
+      <ModalPostulacionPractica
+        style={style}
+        open={modalPostulacion}
+        handleClose={() => setModalPostulacionOpen(false)}
+        practicas={practicas}
+        handleChangePracticas={handleChangePracticas}
+        handleButtonClickPostulacion={handleButtonClickPostulacion}
+        setPracticas={setPracticas}
+        calcularHorasPorDia={calcularHorasPorDia}
+        horasSemana={horasSemana().toString()}
       />
     </ThemeProvider>
   );

@@ -15,62 +15,95 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'; //npm install @mui/
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import CustomTable from './TableHorario/Tabla';
-import TimePickerValue from '../TimePicker/TimePicker';
+import TimePickerValue from './TableHorario/TimePicker';
 
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
 
-const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, handleButtonClickPostulacion, postulacion, setPostulacion , horario, handleChangeHorario, /*calcularSuma*/}) => {
+const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPracticas, handleChangePracticas, handleButtonClickPostulacion, calcularHorasPorDia, horasSemana}) => {
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === 'Backspace' ||
+      e.key === 'Tab' ||
+      e.key === 'Enter' ||
+      e.key === 'ArrowLeft' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'Delete'
+    ) {
+      return;
+    }
+  
+    // Permite solo números.
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+  
+  const handleChangeNum = (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    handleChangePracticas(e);
+  };
+
+  const adapter = (nombre, valor) => {
+    return {
+        target: {
+            name: nombre,
+            value: valor,
+            type: 'text'
+        }
+    };
+  };
 
   const data = [
     [
-      "Lunes",
-      <TimePickerValue hora={horario.lunes.manana.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('lunes', 'manana', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.lunes.manana.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('lunes', 'manana', 'horaTermino', nuevaHora)} />,
-      <TimePickerValue hora={horario.lunes.tarde.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('lunes', 'tarde', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.lunes.tarde.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('lunes', 'tarde', 'horaTermino', nuevaHora)} />,
-      <div>{horario.lunes.horas_totales}</div>
+      'Lunes', 
+      <TimePickerValue hora={practicas.horario.horaLunesMananaEntrada === "" ? null : dayjs(practicas.horario.horaLunesMananaEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesMananaEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaLunesMananaSalida === "" ? null : dayjs(practicas.horario.horaLunesMananaSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesMananaSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaLunesTardeEntrada === "" ? null : dayjs(practicas.horario.horaLunesTardeEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesTardeEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaLunesTardeSalida === "" ? null : dayjs(practicas.horario.horaLunesTardeSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesTardeSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <div>{calcularHorasPorDia("Lunes")} </div>
     ],
     [
-      "Martes",
-      <TimePickerValue hora={horario.martes.manana.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('martes', 'manana', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.martes.manana.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('martes', 'manana', 'horaTermino', nuevaHora)} />,
-      <TimePickerValue hora={horario.martes.tarde.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('martes', 'tarde', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.martes.tarde.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('martes', 'tarde', 'horaTermino', nuevaHora)} />,
-      <div>{horario.martes.horas_totales}</div>
+      'Martes',
+      <TimePickerValue hora={practicas.horario.horaMartesMananaEntrada === "" ? null : dayjs(practicas.horario.horaMartesMananaEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesMananaEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMartesMananaSalida === "" ? null : dayjs(practicas.horario.horaMartesMananaSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesMananaSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMartesTardeEntrada === "" ? null : dayjs(practicas.horario.horaMartesTardeEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesTardeEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMartesTardeSalida === "" ? null : dayjs(practicas.horario.horaMartesTardeSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesTardeSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <div>{calcularHorasPorDia("Martes")} </div>
     ],
     [
-      "Miércoles",
-      <TimePickerValue hora={horario.miercoles.manana.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('miercoles', 'manana', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.miercoles.manana.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('miercoles', 'manana', 'horaTermino', nuevaHora)} />,
-      <TimePickerValue hora={horario.miercoles.tarde.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('miercoles', 'tarde', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.miercoles.tarde.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('miercoles', 'tarde', 'horaTermino', nuevaHora)} />,
-      <div>{horario.miercoles.horas_totales}</div>
+      'Miércoles',
+      <TimePickerValue hora={practicas.horario.horaMiercolesMananaEntrada === "" ? null : dayjs(practicas.horario.horaMiercolesMananaEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesMananaEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMiercolesMananaSalida === "" ? null : dayjs(practicas.horario.horaMiercolesMananaSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesMananaSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMiercolesTardeEntrada === "" ? null : dayjs(practicas.horario.horaMiercolesTardeEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesTardeEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaMiercolesTardeSalida === "" ? null : dayjs(practicas.horario.horaMiercolesTardeSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesTardeSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <div>{calcularHorasPorDia("Miercoles")} </div>
     ],
     [
-      "Jueves",
-      <TimePickerValue hora={horario.jueves.manana.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('jueves', 'manana', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.jueves.manana.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('jueves', 'manana', 'horaTermino', nuevaHora)} />,
-      <TimePickerValue hora={horario.jueves.tarde.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('jueves', 'tarde', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.jueves.tarde.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('jueves', 'tarde', 'horaTermino', nuevaHora)} />,
-      <div>{horario.jueves.horas_totales}</div>
+      'Jueves',
+      <TimePickerValue hora={practicas.horario.horaJuevesMananaEntrada === "" ? null : dayjs(practicas.horario.horaJuevesMananaEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesMananaEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaJuevesMananaSalida === "" ? null : dayjs(practicas.horario.horaJuevesMananaSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesMananaSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaJuevesTardeEntrada === "" ? null : dayjs(practicas.horario.horaJuevesTardeEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesTardeEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaJuevesTardeSalida === "" ? null : dayjs(practicas.horario.horaJuevesTardeSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesTardeSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <div>{calcularHorasPorDia("Jueves")} </div>
     ],
     [
-      "Viernes",
-      <TimePickerValue hora={horario.viernes.manana.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('viernes', 'manana', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.viernes.manana.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('viernes', 'manana', 'horaTermino', nuevaHora)} />,
-      <TimePickerValue hora={horario.viernes.tarde.horaInicio} setHorario={(nuevaHora) => handleChangeHorario('viernes', 'tarde', 'horaInicio', nuevaHora)} />,
-      <TimePickerValue hora={horario.viernes.tarde.horaTermino} setHorario={(nuevaHora) => handleChangeHorario('viernes', 'tarde', 'horaTermino', nuevaHora)} />,
-      <div>{horario.viernes.horas_totales}</div>
+      'Viernes',
+      <TimePickerValue hora={practicas.horario.horaViernesMananaEntrada === "" ? null : dayjs(practicas.horario.horaViernesMananaEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesMananaEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaViernesMananaSalida === "" ? null : dayjs(practicas.horario.horaViernesMananaSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesMananaSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaViernesTardeEntrada === "" ? null : dayjs(practicas.horario.horaViernesTardeEntrada, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesTardeEntrada', hora ? hora.format("HH:mm A") : ""))}/>,
+      <TimePickerValue hora={practicas.horario.horaViernesTardeSalida === "" ? null : dayjs(practicas.horario.horaViernesTardeSalida, "HH:mm A")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesTardeSalida', hora ? hora.format("HH:mm A") : ""))}/>,
+      <div>{calcularHorasPorDia("Viernes")} </div>
     ],
+
   ];
-  
   
     return (
       <Modal open={open} onClose={handleClose}>
         <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Formulario para postulación a {postulacion.practica} Práctica Profesional
+            Formulario para postulación a {practicas.practica.ocasion} Práctica Profesional
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Este formulario se puede enviar una sola vez. En el caso de cometer un error en los datos o querer revisarlo, se debe dirigir a la oficina del coordinador de prácticas.
@@ -78,15 +111,15 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
           <Box sx={{ mt: 2 }}>
             <TextField
               select
-              id="ultimoSemAprobado"
-              value={postulacion.ultimoSemAprobado}
+              id="semestre.UltSem"
+              value={practicas.semestre.UltSem}
               label="Último Semestre Aprobado"
-              name="ultimoSemAprobado"
-              onChange={handleChangePr}
+              name="semestre.UltSem"
+              onChange={handleChangePracticas}
               fullWidth
             >
-              {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
-                <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
+               {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
+              <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
               ))}
             </TextField>
           </Box>
@@ -101,9 +134,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
               <FormControlLabel
                 control={
                   <Checkbox
-                    name="homologacion"
-                    checked={postulacion.homologacion}
-                    onChange={handleChangePr}
+                    id = "practica_homologacion"
+                    name="practica.homologacion"
+                    checked={practicas.practica.homologacion}
+                    onChange={handleChangePracticas}
                     color="primary"
                   />
                 }
@@ -122,10 +156,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 fullWidth
                 id="nombre_organismo"
                 label="Nombre del Organismo"
-                name="nombreOrganismo"
+                name="createOrganismo.nombreOrganismo"
                 autoComplete="nombre_organismo"
-                value={postulacion.nombreOrganismo}
-                onChange={handleChangePr}
+                value={practicas.createOrganismo.nombreOrganismo}
+                onChange={handleChangePracticas}
               />
               <TextField
                 margin="normal"
@@ -133,10 +167,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 fullWidth
                 id="nombre_supervisor"
                 label="Nombre del Supervisor"
-                name="nombreSupervisor"
+                name="createSupervisor.nombre"
                 autoComplete="nombre_supervisor"
-                value={postulacion.nombreSupervisor}
-                onChange={handleChangePr}
+                value={practicas.createSupervisor.nombre}
+                onChange={handleChangePracticas}
               />
               <TextField
                 margin="normal"
@@ -144,39 +178,35 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 fullWidth
                 id="cargo_supervisor"
                 label="Cargo del Supervisor"
-                name="cargoSupervisor"
+                name="createSupervisor.cargo"
                 autoComplete="cargo_supervisor"
-                value={postulacion.cargoSupervisor}
-                onChange={handleChangePr}
+                value={practicas.createSupervisor.cargo}
+                onChange={handleChangePracticas}
               />
-              <Grid container spacing={3}>
-                <Grid item xs={6}>
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="correo_supervisor"
-                    label="Correo del Supervisor"
-                    name="correoSupervisor"
-                    autoComplete="correo_supervisor"
-                    value={postulacion.correoSupervisor}
-                    onChange={handleChangePr}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="telefono_supervisor"
-                    label="Teléfono del Supervisor"
-                    name="telefonoSupervisor"
-                    autoComplete="telefono_supervisor"
-                    value={postulacion.telefonoSupervisor}
-                    onChange={handleChangePr}
-                  />
-                </Grid>
-              </Grid>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="correo_supervisor"
+                label="Correo del Supervisor"
+                name="createSupervisor.correo"
+                autoComplete="correo_supervisor"
+                value={practicas.createSupervisor.correo}
+                onChange={handleChangePracticas}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="telefono_organismo"
+                label="Teléfono"
+                name="createOrganismo.telefono"
+                autoComplete="telefono_organismo"
+                value={practicas.createOrganismo.telefono === 0 || practicas.createOrganismo.telefono === "NaN" ? "" : practicas.createOrganismo.telefono}
+                onChange={handleChangeNum}
+                onKeyDown={handleKeyDown}
+                inputProps={{ maxLength: 9 }}
+              />
               <Grid container spacing={3}>
                 <Grid item xs={6}>
                   <TextField
@@ -185,10 +215,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                     fullWidth
                     id="division_departamento"
                     label="División / Departamento"
-                    name="divisionDepartamento"
+                    name="createOrganismo.divisionDepartamento"
                     autoComplete="division_departamento"
-                    value={postulacion.divisionDepartamento}
-                    onChange={handleChangePr}
+                    value={practicas.createOrganismo.divisionDepartamento}
+                    onChange={handleChangePracticas}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -198,10 +228,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                     fullWidth
                     id="seccion_unidad"
                     label="Sección / Unidad"
-                    name="seccionUnidad"
+                    name="createOrganismo.seccionUnidad"
                     autoComplete="seccion_unidad"
-                    value={postulacion.seccionUnidad}
-                    onChange={handleChangePr}
+                    value={practicas.createOrganismo.seccionUnidad}
+                    onChange={handleChangePracticas}
                   />
                 </Grid>
               </Grid>
@@ -211,10 +241,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 fullWidth
                 id="direccion_organismo"
                 label="Dirección del Organismo"
-                name="direccionOrganismo"
+                name="createOrganismo.direccion"
                 autoComplete="direccion_organismo"
-                value={postulacion.direccionOrganismo}
-                onChange={handleChangePr}
+                value={practicas.createOrganismo.direccion}
+                onChange={handleChangePracticas}
               />
               <Grid container spacing={3}>
                 <Grid item xs={6}>
@@ -224,10 +254,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                     fullWidth
                     id="region"
                     label="Región"
-                    name="region"
+                    name="createOrganismo.otraRegion"
                     autoComplete="region"
-                    value={postulacion.region}
-                    onChange={handleChangePr}
+                    value={practicas.createOrganismo.otraRegion}
+                    onChange={handleChangePracticas}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -237,10 +267,10 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                     fullWidth
                     id="comuna"
                     label="Comuna"
-                    name="comuna"
+                    name="createOrganismo.otraComuna"
                     autoComplete="comuna"
-                    value={postulacion.comuna}
-                    onChange={handleChangePr}
+                    value={practicas.createOrganismo.otraComuna}
+                    onChange={handleChangePracticas}
                   >
                   </TextField>
                 </Grid>
@@ -255,12 +285,13 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 <Grid item xs={6}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
-                            <DatePicker 
+                            <DatePicker
+                            id = "fecha_inicio"
                             label="Fecha de Inicio"
                             format='DD/MM/YYYY'
                             fullWidth
-                            value={postulacion.fechaInicio}
-                            onChange={(date) => { setPostulacion({ ...postulacion, fechaInicio: date }) }}
+                            value={practicas.practica.fechaInicio === "" ? null : dayjs(practicas.practica.fechaInicio, 'DD-MM-YYYY')}
+                            onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaInicio: date ? date.format("DD-MM-YYYY") : ""}}) }}
                             />
                         </DemoContainer>
                     </LocalizationProvider>
@@ -268,30 +299,32 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 <Grid item xs={6}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DatePicker']}>
-                            <DatePicker 
+                            <DatePicker
+                            id = "fecha_termino"
                             label="Fecha de Término"
                             format='DD/MM/YYYY'
                             fullWidth
-                            value={postulacion.fechaTermino}
-                            onChange={(date) => { setPostulacion({ ...postulacion, fechaTermino: date }) }}
+                            value={practicas.practica.fechaTermino === "" ? null : dayjs(practicas.practica.fechaTermino, 'DD-MM-YYYY') }
+                            onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaTermino: date ? date.format("DD-MM-YYYY") : ""}})}}
                             />
                         </DemoContainer>
                       </LocalizationProvider>
                 </Grid>
-            </Grid>
-            
-              
+            </Grid>  
             <Box sx={{ mt: 2 }}>
-              <Typography id="modal-modal-description">
-                  Advertencia: El ingreso del horario debe tener un formato de 24 horas. Por ejemplo, a las doce del día se ingresa como 12:00, mientras que las doce de la noche se ingresa como 00:00.
+              <Typography id="modal-modal-title" sx={{ mt: 2 }} variant='h6' component='h2'>
+                Horario de Práctica Profesional
               </Typography>
-              
-              <Box sx= {{ mt: 2 }}>
-                  <CustomTable 
-                    data = {data} 
-                    horas_semanales = {horario.horas_semanales}/>
-              </Box>
-
+              <Typography id="modal-modal-description">
+                Ingrese el horario de práctica profesional en formato de 12 horas (am/pm).
+              </Typography>
+            </Box>
+            <Box sx= {{ mt: 2 }}>
+              <CustomTable
+                id = "horario"
+                data = {data}
+                horas_semanales = {horasSemana}
+                />
             </Box>
             <Box sx={{ mt: 2 }}>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -306,9 +339,9 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
                 fullWidth
                 id="actividades"
                 label="Descripción de Actividades"
-                name="actividades"
-                value={postulacion.descripcion}
-                onChange={handleChangePr}
+                name="practica.descripcion"
+                value={practicas.practica.descripcion}
+                onChange={handleChangePracticas}
                 multiline
                 rows={4}
                 inputProps={{ maxLength: 900 }}
@@ -317,13 +350,14 @@ const ModalPostulacionPractica = ({ style, open, handleClose, handleChangePr, ha
           </Box>
           <Box sx={{ mt: 2 }}>
               <Button
-                  onClick={handleButtonClickPostulacion}
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                id = "enviar_postulacion"
+                onClick={handleButtonClickPostulacion}
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
               >
-                  Enviar postulación a {postulacion.practica} Práctica
+                Enviar postulación a {practicas.practica.ocasion} Práctica
               </Button>
           </Box>
         </Box>

@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import CustomCell from './CustomCell';
 
-const CustomTable = ({ data , horas_semanales }) => {
+const CustomTable = ({ data , horas_semanales}) => {
 
   return (
     <TableContainer component={Paper}>
@@ -40,7 +40,9 @@ const CustomTable = ({ data , horas_semanales }) => {
           ))}
           <TableRow>
             <CustomCell colSpan={5} align="right"><strong>Total Horas Semanales</strong></CustomCell>
-            <CustomCell align="center"><strong>{horas_semanales}</strong></CustomCell>
+            <CustomCell align="center">
+              <strong>{horas_semanales}</strong>
+            </CustomCell>
           </TableRow>
         </TableBody>
       </Table>

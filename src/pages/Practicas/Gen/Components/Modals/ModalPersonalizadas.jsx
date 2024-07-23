@@ -15,7 +15,6 @@ const ModalPersonalizadas = ({ style, open, setOpen,  handleButtonClickPersonali
             <Box sx={{ mt: 2 }}>
               <TextField
                 select
-                labelId="ultimoSemAprobado"
                 id="ultimoSemAprobado"
                 value={personalizada.ultimoSemAprobado}
                 label="Último Semestre Aprobado"

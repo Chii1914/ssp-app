@@ -14,7 +14,6 @@ const ModalGenericas = ({ style, open, setOpen, carta_generica,handleChangeGener
           <Box sx={{ mt: 2 }}>
             <TextField
               select
-              labelId="ultimoSemAprobado"
               id="ultimoSemAprobado"
               value={carta_generica.ultimoSemAprobado}
               label="Último Semestre Aprobado"
