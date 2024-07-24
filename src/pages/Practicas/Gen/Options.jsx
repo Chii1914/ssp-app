@@ -23,10 +23,13 @@ import Menu from '@mui/material/Menu';
 import PostulacionesModal from "./Components/Modals/VerPostulaciones/PostulacionesModal";
 import { MenuItem, Icon} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import axios from 'axios';
 
 //const initialTime = dayjs().set('hour', 8).set('minute', 0); // Ejemplo de hora inicial: 08:00 AM
 
 const defaultTheme = createTheme();
+const API_BASE_URL= 'http://localhost:3000/api/practica';
+
 
 const Options = () => {
   const [ct_cg, setCg] = useState(null);
@@ -44,7 +47,6 @@ const Options = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   const [open, setOpen] = useState(false);
   const [ModalGenOpen, setModalGenOpen] = useState(false);
@@ -71,41 +73,41 @@ const Options = () => {
 
   const [practicas, setPracticas] = useState({
     horario: {
-        totalHoras: "",
-        horaLunesMananaEntrada: "",
-        horaLunesMananaSalida: "",
-        horaLunesTardeEntrada: "",
-        horaLunesTardeSalida: "",
+      totalHoras: "",
+      horaLunesMananaEntrada: "",
+      horaLunesMananaSalida: "",
+      horaLunesTardeEntrada: "",
+      horaLunesTardeSalida: "",
 
-        horaMartesMananaEntrada: "",
-        horaMartesMananaSalida: "",
-        horaMartesTardeEntrada: "",
-        horaMartesTardeSalida: "",
+      horaMartesMananaEntrada: "",
+      horaMartesMananaSalida: "",
+      horaMartesTardeEntrada: "",
+      horaMartesTardeSalida: "",
 
-        horaMiercolesMananaEntrada: "",
-        horaMiercolesMananaSalida: "",
-        horaMiercolesTardeEntrada: "",
-        horaMiercolesTardeSalida: "",
+      horaMiercolesMananaEntrada: "",
+      horaMiercolesMananaSalida: "",
+      horaMiercolesTardeEntrada: "",
+      horaMiercolesTardeSalida: "",
 
-        horaJuevesMananaEntrada: "",
-        horaJuevesMananaSalida: "",
-        horaJuevesTardeEntrada: "",
-        horaJuevesTardeSalida: "",
+      horaJuevesMananaEntrada: "",
+      horaJuevesMananaSalida: "",
+      horaJuevesTardeEntrada: "",
+      horaJuevesTardeSalida: "",
 
-        horaViernesMananaEntrada: "",
-        horaViernesMananaSalida: "",
-        horaViernesTardeEntrada: "",
-        horaViernesTardeSalida: "",
+      horaViernesMananaEntrada: "",
+      horaViernesMananaSalida: "",
+      horaViernesTardeEntrada: "",
+      horaViernesTardeSalida: "",
 
-        horaSabadoMananaEntrada: "",
-        horaSabadoMananaSalida: "",
-        horaSabadoTardeEntrada: "",
-        horaSabadoTardeSalida: "",
+      horaSabadoMananaEntrada: "",
+      horaSabadoMananaSalida: "",
+      horaSabadoTardeEntrada: "",
+      horaSabadoTardeSalida: "",
 
-        horaDomingoMananaEntrada: "",
-        horaDomingoMananaSalida: "",
-        horaDomingoTardeEntrada: "",
-        horaDomingoTardeSalida: ""
+      horaDomingoMananaEntrada: "",
+      horaDomingoMananaSalida: "",
+      horaDomingoTardeEntrada: "",
+      horaDomingoTardeSalida: ""
     },
     createOrganismo: {
         nombreOrganismo: "",
@@ -133,12 +135,12 @@ const Options = () => {
     semestre: {
         UltSem: "",
     },
-});
+  });
 
   const [carta_generica, setCartaGenerica] = useState({
     ultimoSemAprobado: "",
   });
-  
+
   const [personalizada, setPersonalizada] = useState({
     ultimoSemAprobado: "",
     nombreOrganismo: "",
@@ -148,9 +150,47 @@ const Options = () => {
     divisionDepartamento: "",
     seccionUnidad: "",
   });
+
+  const [ocasion, setOcasion] = useState("");
   
- const [ocasion, setOcasion] = useState("");
+  const [info_primera, setInformacionPrimera] = useState([]);
   
+  const [info_segunda, setInformacionSegunda] = useState([]);
+  
+  const obtenerInformacionPrimera = async () => {
+    try {
+      const token = Cookies.get("token");
+      const response = await axios.get(`${API_BASE_URL}/primera`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = response.data.map(item => ({
+        status: item.status,
+        total_primera: item.total_primera,
+        total_segunda: item.total_segunda,
+        contadores: {
+          sinEvaluar: item.contadores.sin_evaluar,
+          evaluadas: item.contadores.evaluadas,
+          sinAccion: item.contadores.sin_accion,
+          aprobadas: item.contadores.aprobadas,
+          rechazadas: item.contadores.rechazadas,
+        },
+        practicas: {
+          ocasion: item.practicas.ocasion,
+          estado: item.practicas.estado,
+          descripcion: item.practicas.descripcion,
+          fechaCambioEstado: item.practicas.fechaCambioEstado,
+        }
+      }));
+      setInformacionPrimera(data);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    }
+  };
+
+  obtenerInformacionPrimera();
+  console.log(info_primera);
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -166,34 +206,6 @@ const Options = () => {
 
   const navigate = useNavigate();
   const email = jwtDecode(Cookies.get("token")).email;
-
-  const calcularHorasPorDia = (dia) => {
-    let minutosManana = 0;
-    let minutosTarde = 0;
-
-    if (practicas) {
-        if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
-            const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
-            const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
-            minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
-        }
-
-        if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
-            const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
-            const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
-            minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
-        }
-    }
-    return (minutosManana + minutosTarde) / 60;
-  };
-
-  const horasSemana = () => {
-    let horasTotalesSemanales = 0;
-    ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
-        horasTotalesSemanales += calcularHorasPorDia(dia);
-    });
-    return horasTotalesSemanales;
-  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -367,7 +379,7 @@ const Options = () => {
     },
   ];
 
-  return (
+  return (    
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }} />
       <CssBaseline />
@@ -468,8 +480,6 @@ const Options = () => {
         handleChangePracticas={handleChangePracticas}
         handleButtonClickPostulacion={handleButtonClickPostulacion}
         setPracticas={setPracticas}
-        calcularHorasPorDia={calcularHorasPorDia}
-        horasSemana={horasSemana().toString()}
       />
     </ThemeProvider>
   );

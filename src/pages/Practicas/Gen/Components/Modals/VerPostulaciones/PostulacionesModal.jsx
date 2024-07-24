@@ -18,13 +18,13 @@ const postulaciones = [
 const PostulacionesModal = ({ style, open, handleClose, ocasion }) => {
 
     const [informacion, setInformacion] = useState({
-        aceptadasSinAccion: 1,
-        aceptadasAprobadas: 0,
+        sinEvaluar: 1,
+        evaluadas: 0,
         sinAccion: 0,
-        aceptadasReprobadas: 0,
+        aprobadas: 0,
         rechazadas: 12,
         });
-        
+
     return (
     <Modal open={open} onClose={handleClose}>
         <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
@@ -32,16 +32,16 @@ const PostulacionesModal = ({ style, open, handleClose, ocasion }) => {
             Postulaciones {ocasion} Práctica
         </Typography>
         <Typography variant="body1" gutterBottom>
-            Aceptadas Sin acción: {informacion.aceptadasSinAccion}
+            Prácticas Sin Evaluar: {informacion.sinEvaluar}
         </Typography>
         <Typography variant="body1" gutterBottom>
-            Aceptadas Aprobadas: {informacion.aceptadasAprobadas}
+            Prácticas Evaluadas: {informacion.evaluadas}
         </Typography>
         <Typography variant="body1" gutterBottom>
             Sin Acción: {informacion.sinAccion}
         </Typography>
         <Typography variant="body1" gutterBottom>
-            Aceptadas Reprobadas: {informacion.aceptadasReprobadas}
+            Aprobadas: {informacion.aprobadas}
         </Typography>
         <Typography variant="body1" gutterBottom>
             Rechazadas: {informacion.rechazadas}
