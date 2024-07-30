@@ -3,9 +3,9 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const cargando = () => {
+const cargando = (e) => {
   Swal.fire({
-    title: "Generando Carta",
+    title: `Generando ${e ? e : "carta"}`,
     text: "Espere por favor",
     html: '<i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>',
     allowOutsideClick: false,
@@ -13,18 +13,18 @@ const cargando = () => {
   });
 };
 
-const falla = () => {
+const falla = (e) => {
   Swal.fire({
     title: "Error",
-    text: "No se pudo generar la carta",
+    text: `No se pudo generar ${e ? `la ${e}` : "la carta"}`,
     icon: "error",
     confirmButtonText: "Ok",
   });
 };
 
-const exito = (response) => {
+const exito = (response, e) => {
   Swal.fire({
-    title: "Carta generada",
+    title: `${e ? "Postulación" : "Carta"} generada`,
     text: response.data,
     icon: "success",
     confirmButtonText: "Ok",
@@ -71,12 +71,13 @@ export const generarCartaPersonalizada = async (personalizada) => {
 };
 
 export const generarPrimeraPractica = async () => {
-  //cargando();
+  cargando("postulación");
   try {
     alert("generao");
+    //exito(response, "postulación");
   } catch (error) {
     console.log(error);
-    falla();
+    falla("postulación");
   }
 };
 

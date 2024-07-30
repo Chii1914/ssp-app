@@ -25,7 +25,6 @@ import { MenuItem, Icon} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import axios from 'axios';
 
-//const initialTime = dayjs().set('hour', 8).set('minute', 0); // Ejemplo de hora inicial: 08:00 AM
 
 const defaultTheme = createTheme();
 const API_BASE_URL= 'http://localhost:3000/api/practica';
@@ -151,45 +150,63 @@ const Options = () => {
     seccionUnidad: "",
   });
 
-  const [ocasion, setOcasion] = useState("");
-  
-  const [info_primera, setInformacionPrimera] = useState([]);
-  
-  const [info_segunda, setInformacionSegunda] = useState([]);
-  
-  const obtenerInformacionPrimera = async () => {
-    try {
-      const token = Cookies.get("token");
-      const response = await axios.get(`${API_BASE_URL}/primera`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const data = response.data.map(item => ({
-        status: item.status,
-        total_primera: item.total_primera,
-        total_segunda: item.total_segunda,
-        contadores: {
-          sinEvaluar: item.contadores.sin_evaluar,
-          evaluadas: item.contadores.evaluadas,
-          sinAccion: item.contadores.sin_accion,
-          aprobadas: item.contadores.aprobadas,
-          rechazadas: item.contadores.rechazadas,
-        },
-        practicas: {
-          ocasion: item.practicas.ocasion,
-          estado: item.practicas.estado,
-          descripcion: item.practicas.descripcion,
-          fechaCambioEstado: item.practicas.fechaCambioEstado,
-        }
-      }));
-      setInformacionPrimera(data);
-    } catch (error) {
-      console.error("Failed to fetch data", error);
-    }
-  };
+  const [ocasion, setOcasion] = useState("Primera");
 
-  obtenerInformacionPrimera();
-  console.log(info_primera);
+  const [info_primera, setInformacionPrimera] = useState({
+    status: true,
+    total: 0,
+    contadores: {
+      sin_evaluar: 0,
+      evaluadas: 0,
+      sin_accion: 0,
+      aprobadas: 0,
+      rechazadas: 0
+    },
+    practicas: []
+  });
+
+  const [info_segunda, setInformacionSegunda] = useState({
+    status: true,
+    total: 0,
+    contadores: {
+      sin_evaluar: 0,
+      evaluadas: 0,
+      sin_accion: 0,
+      aprobadas: 0,
+      rechazadas: 0
+    },
+    practicas: []
+  });
+
+  const obtenerInformacionPracticas = async (ocasion_practica) => {
+    const token = Cookies.get("token");
+    const response = await axios.get(`${API_BASE_URL}/${ocasion_practica}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(response => {
+      const { status, contadores, practicas } = response.data;
+      if (ocasion_practica === "primera") {
+        setInformacionPrimera(prevState => ({
+          ...prevState,
+          status: status,
+          total: contadores ? contadores.sin_evaluar + contadores.sin_accion + contadores.evaluadas : 0,
+          contadores: contadores,
+          practicas: practicas
+        }));
+      }
+      else{
+        setInformacionSegunda(prevState => ({
+          ...prevState,
+          status: status,
+          total: contadores ? contadores.sin_evaluar + contadores.sin_accion + contadores.evaluadas : 0,
+          contadores: contadores,
+          practicas: practicas
+        }));
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  };
 
   const style = {
     position: "absolute",
@@ -290,7 +307,6 @@ const Options = () => {
     setIsButtonDisabled(true);
     setModalPostulacionOpen(false);
     await generarPrimeraPractica(practicas);
-    console.log(practicas);
     setIsButtonDisabled(false);
   };
 
@@ -337,7 +353,9 @@ const Options = () => {
     fetchData(email, setInputs, setIsButtonDisabled, setOpen);
     fetchCtGen(setCg);
     fetchCtPer(setCp);
-    fetchPractica(setCounters);
+    //fetchPractica(setCounters);
+    obtenerInformacionPracticas("primera");
+    obtenerInformacionPracticas("segunda");
   }, [email]);
 
   const tiers = [
@@ -361,21 +379,21 @@ const Options = () => {
     },
     {
       title: "Postulación Primera Práctica",
-      subheader: `Solicitado ${counters ? counters["contadores"]["sin_accion"] : 0} veces`,
+      subheader: `Solicitado ${info_primera.total} veces`,
       description: ["Formulario de postulación para su primera práctica profesional."],
       buttonText: "Generar",
       buttonVariant: "contained",
       actionName: "postulacionPrimera",
-      disabled: counters && counters["contadores"]["sin_accion"] >= 3,
+      disabled: !(info_primera.status),
     },
     {
       title: "Postulación Segunda Práctica",
-      subheader: "Solicitado # veces",
+      subheader: `Solicitado ${info_segunda.total} veces`,
       description: ["Formulario de postulación para su segunda práctica profesional."],
       buttonText: "Generar",
       buttonVariant: "contained",
       actionName: "postulacionSegunda",
-      disabled: false,
+      disabled: !(info_segunda.status),
     },
   ];
 
@@ -455,6 +473,7 @@ const Options = () => {
         open={verPostulaciones}
         handleClose={() => setVerPostulaciones(false)}
         ocasion = {ocasion}
+        informacion = {ocasion === "Primera" ? info_primera : info_segunda}
       />
       <ModalGenericas
         style={style}
