@@ -20,7 +20,27 @@ import TimePickerValue from './TableHorario/TimePicker';
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
 
-const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPracticas, handleChangePracticas, handleButtonClickPostulacion, calcularHorasPorDia, horasSemana}) => {
+const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPracticas, handleChangePracticas, handleButtonClickPostulacion}) => {
+  
+  const calcularHorasPorDia = (dia) => {
+    let minutosManana = 0;
+    let minutosTarde = 0;
+
+    if (practicas) {
+        if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
+            const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
+            const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
+            minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
+        }
+
+        if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
+            const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
+            const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
+            minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
+        }
+    }
+    return (minutosManana + minutosTarde) / 60;
+  };
 
   const handleKeyDown = (e) => {
     if (
@@ -101,7 +121,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
   
     return (
       <Modal open={open} onClose={handleClose}>
-        <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
+        <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh", maxWidth: "125vh" }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Formulario para postulación a {practicas.practica.ocasion} Práctica Profesional
           </Typography>
@@ -323,7 +343,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
               <CustomTable
                 id = "horario"
                 data = {data}
-                horas_semanales = {horasSemana}
+                horas_semanales = {practicas.horario.totalHoras === "" ? "0" : practicas.horario.totalHoras.toString()}
                 />
             </Box>
             <Box sx={{ mt: 2 }}>
