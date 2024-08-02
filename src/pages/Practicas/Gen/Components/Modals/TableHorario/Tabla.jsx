@@ -39,8 +39,8 @@ const CustomTable = ({ data , horas_semanales}) => {
             </TableRow>
           ))}
           <TableRow>
-            <CustomCell colSpan={5} align="right"><strong>Total Horas Semanales</strong></CustomCell>
-            <CustomCell align="center">
+            <CustomCell colSpan = {5} align="right"><strong>Total Horas Semanales</strong></CustomCell>
+            <CustomCell style = {{color: parseFloat(horas_semanales) <= 0 ? "red" : "black"}} align="center">
               <strong>{horas_semanales}</strong>
             </CustomCell>
           </TableRow>

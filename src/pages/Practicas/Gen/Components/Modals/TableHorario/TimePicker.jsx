@@ -12,7 +12,6 @@ export default function TimePickerValue({ hora, setHorario }) {
           label=""
           value={hora}
           onChange={(newValue) => { setHorario(newValue) }}
-          sx={{ width: '' }} // Ajusta el ancho según tus necesidades
         />
       </DemoContainer>
     </LocalizationProvider>

@@ -1,9 +1,9 @@
 import React from 'react';
 import TableCell from '@mui/material/TableCell';
 
-const CustomCell = ({ children }) => {
+const CustomCell = ({ children , style }) => {
   return (
-    <TableCell align = "center">
+    <TableCell style = {style} align = "center">
       {children}
     </TableCell>
   );

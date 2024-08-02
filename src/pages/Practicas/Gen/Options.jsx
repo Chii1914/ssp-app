@@ -208,6 +208,9 @@ const Options = () => {
     });
   };
 
+  const navigate = useNavigate();
+  const email = jwtDecode(Cookies.get("token")).email;
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -221,16 +224,13 @@ const Options = () => {
     p: 4,
   };
 
-  const navigate = useNavigate();
-  const email = jwtDecode(Cookies.get("token")).email;
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setInputs({ ...inputs, [name]: value });
   };
 
   const handleChangeGenerica = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target;    console.log(personalizada);
     setCartaGenerica({ ...carta_generica, [name]: value });
   };
 
@@ -494,11 +494,12 @@ const Options = () => {
       <ModalPostulacionPractica
         style={style}
         open={modalPostulacion}
-        handleClose={() => setModalPostulacionOpen(false)}
         practicas={practicas}
-        handleChangePracticas={handleChangePracticas}
-        handleButtonClickPostulacion={handleButtonClickPostulacion}
         setPracticas={setPracticas}
+        handleChangePracticas={handleChangePracticas}
+        handleClose={() => setModalPostulacionOpen(false)}
+        handleButtonClickPostulacion={handleButtonClickPostulacion}
+        
       />
     </ThemeProvider>
   );

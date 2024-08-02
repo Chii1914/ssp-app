@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -20,24 +21,75 @@ import TimePickerValue from './TableHorario/TimePicker';
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
 
+let mensajeFechaInicio = "";
+let mensajeFechaTermino = "";
+
 const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPracticas, handleChangePracticas, handleButtonClickPostulacion}) => {
-  
+  const [errors, setErrors] = useState({});  
+
+  const handleButtonClick = () => {
+    const newErrors = {};
+    if (!practicas.semestre.UltSem) newErrors.UltSem = true;
+    if (!practicas.createOrganismo.nombreOrganismo) newErrors.nombreOrganismo = true;
+    if (!practicas.createSupervisor.nombre) newErrors.nombreSupervisor = true;
+    if (!practicas.createSupervisor.cargo) newErrors.cargoSupervisor = true;
+    if (!practicas.createOrganismo.divisionDepartamento) newErrors.divisionDepartamento = true;
+    if (!practicas.createOrganismo.seccionUnidad) newErrors.seccionUnidad = true;
+    if (!practicas.createSupervisor.correo) newErrors.correoSupervisor = true;
+    if (!practicas.createOrganismo.telefono) newErrors.telefonoOrganismo = true;
+    if (!practicas.createOrganismo.direccion) newErrors.direccionOrganismo = true;
+    if (!practicas.createOrganismo.otraRegion) newErrors.region = true;
+    if (!practicas.createOrganismo.otraComuna) newErrors.comuna = true;
+    if (!practicas.practica.descripcion) newErrors.descripcion = true;
+    if (!practicas.horario.totalHoras || parseFloat(practicas.horario.totalHoras) <= 0) newErrors.totalHoras = true;
+
+    if(!practicas.practica.fechaInicio){
+      newErrors.fechaInicio = true;
+      mensajeFechaInicio = "Campo Obligatorio";
+    }
+    else if (dayjs(practicas.practica.fechaInicio,'DD-MM-YYYY').isBefore(dayjs().startOf('day'))){
+      newErrors.fechaInicio = true;
+      mensajeFechaInicio = "No puede ser una fecha anterior al dia de hoy";
+    }
+
+    if (!practicas.practica.fechaTermino){ 
+      newErrors.fechaTermino = true;
+      mensajeFechaTermino = "Campo Obligatorio";
+    }
+    else if (dayjs(practicas.practica.fechaTermino,'DD-MM-YYYY').isBefore(dayjs().startOf('day'))){
+      newErrors.fechaTermino = true;
+      mensajeFechaTermino = "No puede ser una fecha anterior al día de hoy";
+    }
+    else if (dayjs(practicas.practica.fechaTermino,'DD-MM-YYYY').isSame(dayjs(practicas.practica.fechaInicio,'DD-MM-YYYY'),'day')){
+      newErrors.fechaTermino = true;
+      mensajeFechaTermino = "No puede ser la misma fecha que la fecha de inicio";
+    }
+        
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      handleButtonClickPostulacion();
+    }
+  };
+
+
+
   const calcularHorasPorDia = (dia) => {
     let minutosManana = 0;
     let minutosTarde = 0;
 
     if (practicas) {
-        if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
-            const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
-            const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
-            minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
-        }
+      if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
+          const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
+          const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
+          minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
+      }
 
-        if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
-            const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
-            const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
-            minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
-        }
+      if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
+          const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
+          const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
+          minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
+      }
     }
     return (minutosManana + minutosTarde) / 60;
   };
@@ -137,6 +189,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
               name="semestre.UltSem"
               onChange={handleChangePracticas}
               fullWidth
+              error = {errors.UltSem}
+              helperText={errors.UltSem ? "Este campo es obligatorio" : ""}
             >
                {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
               <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
@@ -180,6 +234,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 autoComplete="nombre_organismo"
                 value={practicas.createOrganismo.nombreOrganismo}
                 onChange={handleChangePracticas}
+                error = {errors.nombreOrganismo}
+                helperText={errors.nombreOrganismo ? "Este campo es obligatorio" : ""}
               />
               <TextField
                 margin="normal"
@@ -191,6 +247,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 autoComplete="nombre_supervisor"
                 value={practicas.createSupervisor.nombre}
                 onChange={handleChangePracticas}
+                error = {errors.nombreSupervisor}
+                helperText={errors.nombreSupervisor ? "Este campo es obligatorio" : ""}
               />
               <TextField
                 margin="normal"
@@ -202,6 +260,9 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 autoComplete="cargo_supervisor"
                 value={practicas.createSupervisor.cargo}
                 onChange={handleChangePracticas}
+                error = {errors.cargoSupervisor}
+                helperText={errors.cargoSupervisor ? "Este campo es obligatorio" : ""}
+
               />
               <TextField
                 margin="normal"
@@ -213,6 +274,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 autoComplete="correo_supervisor"
                 value={practicas.createSupervisor.correo}
                 onChange={handleChangePracticas}
+                error = {errors.correoSupervisor}
+                helperText={errors.correoSupervisor ? "Este campo es obligatorio" : ""}
               />
               <TextField
                 margin="normal"
@@ -226,6 +289,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 onChange={handleChangeNum}
                 onKeyDown={handleKeyDown}
                 inputProps={{ maxLength: 9 }}
+                error = {errors.telefonoOrganismo}
+                helperText={errors.telefonoOrganismo ? "Este campo es obligatorio" : ""}
               />
               <Grid container spacing={3}>
                 <Grid item xs={6}>
@@ -239,6 +304,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     autoComplete="division_departamento"
                     value={practicas.createOrganismo.divisionDepartamento}
                     onChange={handleChangePracticas}
+                    error = {errors.divisionDepartamento}
+                    helperText={errors.divisionDepartamento ? "Este campo es obligatorio" : ""}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -252,20 +319,11 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     autoComplete="seccion_unidad"
                     value={practicas.createOrganismo.seccionUnidad}
                     onChange={handleChangePracticas}
+                    error = {errors.seccionUnidad}
+                    helperText={errors.seccionUnidad ? "Este campo es obligatorio" : ""}
                   />
                 </Grid>
               </Grid>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="direccion_organismo"
-                label="Dirección del Organismo"
-                name="createOrganismo.direccion"
-                autoComplete="direccion_organismo"
-                value={practicas.createOrganismo.direccion}
-                onChange={handleChangePracticas}
-              />
               <Grid container spacing={3}>
                 <Grid item xs={6}>
                   <TextField
@@ -278,6 +336,8 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     autoComplete="region"
                     value={practicas.createOrganismo.otraRegion}
                     onChange={handleChangePracticas}
+                    error = {errors.region}
+                    helperText={errors.region ? "Este campo es obligatorio" : ""}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -291,10 +351,27 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     autoComplete="comuna"
                     value={practicas.createOrganismo.otraComuna}
                     onChange={handleChangePracticas}
+                    error = {errors.comuna}
+                    helperText={errors.comuna ? "Este campo es obligatorio" : ""}
                   >
                   </TextField>
                 </Grid>
               </Grid>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="direccion_organismo"
+                label="Dirección del Organismo"
+                name="createOrganismo.direccion"
+                autoComplete="direccion_organismo"
+                value={practicas.createOrganismo.direccion}
+                onChange={handleChangePracticas}
+                multiline
+                rows = {2}
+                error = {errors.direccionOrganismo}
+                helperText={errors.direccionOrganismo ? "Este campo es obligatorio" : ""}
+              />
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
@@ -303,32 +380,45 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
             </Typography>
             <Grid container spacing={3}>
                 <Grid item xs={6}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                            <DatePicker
-                            id = "fecha_inicio"
-                            label="Fecha de Inicio"
-                            format='DD/MM/YYYY'
-                            fullWidth
-                            value={practicas.practica.fechaInicio === "" ? null : dayjs(practicas.practica.fechaInicio, 'DD-MM-YYYY')}
-                            onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaInicio: date ? date.format("DD-MM-YYYY") : ""}}) }}
-                            />
-                        </DemoContainer>
-                    </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DatePicker']}>
+                      <DatePicker
+                      id = "fecha_inicio"
+                      label="Fecha de Inicio"
+                      format='DD/MM/YYYY'
+                      fullWidth
+                      value={practicas.practica.fechaInicio === "" ? null : dayjs(practicas.practica.fechaInicio, 'DD-MM-YYYY')}
+                      onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaInicio: date ? date.format("DD-MM-YYYY") : ""}}) }}
+                      slotProps={{
+                        textField: {
+                          error: errors.fechaInicio,
+                          helperText: errors.fechaInicio ? mensajeFechaInicio : ""
+                        },
+                      }}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </Grid>
                 <Grid item xs={6}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                            <DatePicker
-                            id = "fecha_termino"
-                            label="Fecha de Término"
-                            format='DD/MM/YYYY'
-                            fullWidth
-                            value={practicas.practica.fechaTermino === "" ? null : dayjs(practicas.practica.fechaTermino, 'DD-MM-YYYY') }
-                            onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaTermino: date ? date.format("DD-MM-YYYY") : ""}})}}
-                            />
-                        </DemoContainer>
-                      </LocalizationProvider>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DatePicker']}>
+                      <DatePicker
+                      id = "fecha_termino"
+                      label="Fecha de Término"
+                      format='DD/MM/YYYY'
+                      fullWidth
+                      value={practicas.practica.fechaTermino === "" ? null : dayjs(practicas.practica.fechaTermino, 'DD-MM-YYYY') }
+                      onChange={(date) => { setPracticas({ ...practicas, practica: {...practicas.practica, fechaTermino: date ? date.format("DD-MM-YYYY") : ""}})}}
+                      slotProps={{
+                        textField: {
+                          error: errors.fechaTermino,
+                          helperText: errors.fechaTermino ? mensajeFechaTermino : ""
+                        },
+                      }}
+                      
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </Grid>
             </Grid>  
             <Box sx={{ mt: 2 }}>
@@ -365,19 +455,21 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 multiline
                 rows={4}
                 inputProps={{ maxLength: 900 }}
+                error = {errors.descripcion}
+                helperText={errors.descripcion ? "Este campo es obligatorio" : ""}
               />
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
               <Button
                 id = "enviar_postulacion"
-                onClick={handleButtonClickPostulacion}
+                onClick={handleButtonClick}
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Enviar postulación a {practicas.practica.ocasion} Práctica
+                Enviar postulación para {practicas.practica.ocasion} Práctica
               </Button>
           </Box>
         </Box>

@@ -1,7 +1,14 @@
 import React from 'react';
+import { useState } from 'react';
 import { Modal, Box, Typography, TextField, MenuItem, Button } from '@mui/material';
 
 const ModalGenericas = ({ style, open, setOpen, carta_generica,handleChangeGenerica, handleButtonClickGenerica }) => {
+  const [error, setError] = useState(false);
+  
+  const handleButtonClick = () => {
+    carta_generica.ultimoSemAprobado === '' ? setError(true) : (handleButtonClickGenerica() && setError(false));
+  };
+  
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh" }}>
@@ -20,6 +27,18 @@ const ModalGenericas = ({ style, open, setOpen, carta_generica,handleChangeGener
               name="ultimoSemAprobado"
               onChange={handleChangeGenerica}
               fullWidth
+              error={error}
+              helperText={error ? "Este campo es obligatorio" : ""}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '&:hover fieldset': {
+                    borderColor: error ? 'red' : 'default',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: error ? 'red' : 'default',
+                  },
+                },
+              }}
             >
               {['Primer', 'Segundo', 'Tercer', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'].map((semestre, index) => (
               <MenuItem key={index} value={`${semestre} Semestre`}>{`${semestre} Semestre`}</MenuItem>
@@ -28,7 +47,7 @@ const ModalGenericas = ({ style, open, setOpen, carta_generica,handleChangeGener
           </Box>
           <Box sx={{ mt: 2 }}>
             <Button
-              onClick={handleButtonClickGenerica}
+              onClick={handleButtonClick}
               type="submit"
               fullWidth
               variant="contained"
