@@ -13,7 +13,7 @@ import CardComponent from "./Components/CardComponent";
 import FormModal from "./Components/FormModal";
 import Header from "./Components/Header";
 import { fetchData, fetchCtGen, fetchCtPer, fetchPractica } from "./utils/fetchData";
-import { generarCartaGenerica, generarCartaPersonalizada, generarPrimeraPractica, updateInformation } from "./utils/api";
+import { generarCartaGenerica, generarCartaPersonalizada, generarPostulacion, updateInformation } from "./utils/api";
 import ModalPostulacionPractica from "./Components/Modals/PostulacionPracticaModal";
 import ModalGenericas from "./Components/Modals/ModalGenericas";
 import ModalPersonalizadas from "./Components/Modals/ModalPersonalizadas";
@@ -306,7 +306,7 @@ const Options = () => {
   const handleButtonClickPostulacion = async () => {
     setIsButtonDisabled(true);
     setModalPostulacionOpen(false);
-    await generarPrimeraPractica(practicas);
+    await generarPostulacion(practicas);
     setIsButtonDisabled(false);
   };
 

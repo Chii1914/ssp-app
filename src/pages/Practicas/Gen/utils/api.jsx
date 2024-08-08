@@ -16,7 +16,7 @@ const cargando = (e) => {
 const falla = (e) => {
   Swal.fire({
     title: "Error",
-    text: `No se pudo generar ${e ? `la ${e}` : "la carta"}`,
+    text: `No se pudo generar la ${e ? e : "carta"}`,
     icon: "error",
     confirmButtonText: "Ok",
   });
@@ -70,13 +70,21 @@ export const generarCartaPersonalizada = async (personalizada) => {
   }
 };
 
-export const generarPrimeraPractica = async () => {
+export const generarPostulacion = async (postulacion) => {
   cargando("postulación");
   try {
-    alert("generao");
-    //exito(response, "postulación");
+    const response = await axios.post(
+      `http://localhost:3000/api/practica`,
+      postulacion,
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    exito(response, "postulación");
   } catch (error) {
-    console.log(error);
+    console.log("Error Generating application:", error);
     falla("postulación");
   }
 };

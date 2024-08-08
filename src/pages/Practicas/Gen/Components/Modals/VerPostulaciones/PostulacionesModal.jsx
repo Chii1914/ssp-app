@@ -41,7 +41,7 @@ const PostulacionesModal = ({ style, open, handleClose, ocasion, informacion }) 
                     {informacion.practicas.map((row, index) => (
                     <TableRow key={index}>
                         <TableCell>{row.fechaCambioEstado}</TableCell>
-                        <TableCell style={{ color: row.estado === "Aceptada" ? "green" : "red" }}>{row.estado}</TableCell>
+                        <TableCell style={{ color: row.estado === "Aceptada" ? "green" : (row.estado === "Rechazada" ? "red" : "black") }}>{row.estado}</TableCell>
                         <TableCell>{row.descripcion}</TableCell>
                     </TableRow>
                     ))}
