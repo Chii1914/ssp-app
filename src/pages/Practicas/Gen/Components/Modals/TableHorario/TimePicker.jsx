@@ -4,7 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
-export default function TimePickerValue({ hora, setHorario }) {
+export default function TimePickerValue({ hora, setHorario, errorHorario, mensajeError}) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={['TimePicker', 'TimePicker']}>
@@ -12,7 +12,12 @@ export default function TimePickerValue({ hora, setHorario }) {
           label=""
           value={hora}
           onChange={(newValue) => { setHorario(newValue) }}
-          sx={{ width: '' }} // Ajusta el ancho según tus necesidades
+          slotProps={{
+            textField: {
+              error: errorHorario,
+              helperText: errorHorario ? mensajeError : "",
+            },
+          }}
         />
       </DemoContainer>
     </LocalizationProvider>
