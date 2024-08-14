@@ -7,33 +7,32 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
-import CardComponent from "./Components/CardComponent";
-import FormModal from "./Components/FormModal";
-import Header from "./Components/Header";
-import { fetchData, fetchCtGen, fetchCtPer, fetchPractica } from "./utils/fetchData";
-import { generarCartaGenerica, generarCartaPersonalizada, generarPostulacion, updateInformation } from "./utils/api";
-import ModalPostulacionPractica from "./Components/Modals/PostulacionPracticaModal";
-import ModalGenericas from "./Components/Modals/ModalGenericas";
-import ModalPersonalizadas from "./Components/Modals/ModalPersonalizadas";
-import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
 import Menu from '@mui/material/Menu';
-import PostulacionesModal from "./Components/Modals/VerPostulaciones/PostulacionesModal";
 import { MenuItem, Icon} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import axios from 'axios';
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import Header from "./Components/Header";
+import FormModal from "./Components/FormModal";
+import CardComponent from "./Components/CardComponent";
+import ModalGenericas from "./Components/Modals/ModalGenericas";
+import ModalPersonalizadas from "./Components/Modals/ModalPersonalizadas";
+import ModalPostulacionPractica from "./Components/Modals/PostulacionPracticaModal";
+import PostulacionesModal from "./Components/Modals/VerPostulaciones/PostulacionesModal";
+import { generarCartaGenerica, generarCartaPersonalizada, generarPostulacion, updateInformation } from "./utils/api";
+import { fetchData, fetchCtGen, fetchCtPer, fetchInfoPracticas, fetchComunas, fetchRegiones } from "./utils/fetchData";
+import dayjs from "dayjs";
+
+
 
 
 const defaultTheme = createTheme();
-const API_BASE_URL= 'http://localhost:3000/api/practica';
-
 
 const Options = () => {
   const [ct_cg, setCg] = useState(null);
   const [ct_cp, setCp] = useState(null);
-  const [counters, setCounters] = useState(null);
+  //const [counters, setCounters] = useState(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,6 +52,9 @@ const Options = () => {
   const [verPostulaciones, setVerPostulaciones] = useState(false);
 
   const [ModalPersOpen, setModalPersOpen] = useState(false);
+
+  const [regiones, setRegiones] = useState([]);
+  const [comunas, setComunas] = useState([]);
 
   const [inputs, setInputs] = useState({
     primerNombre: "",
@@ -178,36 +180,6 @@ const Options = () => {
     practicas: []
   });
 
-  const obtenerInformacionPracticas = async (ocasion_practica) => {
-    const token = Cookies.get("token");
-    const response = await axios.get(`${API_BASE_URL}/${ocasion_practica}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(response => {
-      const { status, contadores, practicas } = response.data;
-      if (ocasion_practica === "primera") {
-        setInformacionPrimera(prevState => ({
-          ...prevState,
-          status: status,
-          total: contadores ? contadores.sin_evaluar + contadores.sin_accion + contadores.evaluadas : 0,
-          contadores: contadores,
-          practicas: practicas
-        }));
-      }
-      else{
-        setInformacionSegunda(prevState => ({
-          ...prevState,
-          status: status,
-          total: contadores ? contadores.sin_evaluar + contadores.sin_accion + contadores.evaluadas : 0,
-          contadores: contadores,
-          practicas: practicas
-        }));
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-  };
-
   const navigate = useNavigate();
   const email = jwtDecode(Cookies.get("token")).email;
 
@@ -230,7 +202,7 @@ const Options = () => {
   };
 
   const handleChangeGenerica = (event) => {
-    const { name, value } = event.target;    console.log(personalizada);
+    const { name, value } = event.target;
     setCartaGenerica({ ...carta_generica, [name]: value });
   };
 
@@ -247,43 +219,58 @@ const Options = () => {
       let updatedState = { ...currentPracticas };
 
       if (keys[0] === 'horario') {
-          updatedState.horario = {
-              ...updatedState.horario,
-              [keys[1]]: type === 'checkbox' ? checked : value
-          };
+        updatedState.horario = {
+            ...updatedState.horario,
+            [keys[1]]: type === 'checkbox' ? checked : value
+        };
 
-          let horasTotalesSemanales = 0;
-          ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
-              let minutosManana = 0;
-              let minutosTarde = 0;
+        let horasTotalesSemanales = 0;
+        ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
+          let minutosManana = 0;
+          let minutosTarde = 0;
 
-              if (updatedState.horario[`hora${dia}MananaEntrada`] && updatedState.horario[`hora${dia}MananaSalida`]) {
-                  const horaInicioManana = dayjs(updatedState.horario[`hora${dia}MananaEntrada`], 'HH:mm');
-                  const horaTerminoManana = dayjs(updatedState.horario[`hora${dia}MananaSalida`], 'HH:mm');
-                  minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
-              }
-
-              if (updatedState.horario[`hora${dia}TardeEntrada`] && updatedState.horario[`hora${dia}TardeSalida`]) {
-                  const horaInicioTarde = dayjs(updatedState.horario[`hora${dia}TardeEntrada`], 'HH:mm');
-                  const horaTerminoTarde = dayjs(updatedState.horario[`hora${dia}TardeSalida`], 'HH:mm');
-                  minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
-              }
-
-              horasTotalesSemanales += (minutosManana + minutosTarde) / 60;
-          });
-
-          updatedState.horario.totalHoras = horasTotalesSemanales.toString();
-      } else {
-          if (keys.length === 1) {
-              // Si el campo es directamente una propiedad de practicas
-              updatedState[keys[0]] = value;
-          } else if (keys.length === 2) {
-              // Si el campo está anidado un nivel (por ejemplo, horario.totalHoras)
-              updatedState[keys[0]] = {
-                  ...updatedState[keys[0]],
-                  [keys[1]]: type === 'checkbox' ? checked : value
-              };
+          if (updatedState.horario[`hora${dia}MananaEntrada`] && updatedState.horario[`hora${dia}MananaSalida`]) {
+              const horaInicioManana = dayjs(updatedState.horario[`hora${dia}MananaEntrada`], 'HH:mm');
+              const horaTerminoManana = dayjs(updatedState.horario[`hora${dia}MananaSalida`], 'HH:mm');
+              minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
           }
+
+          if (updatedState.horario[`hora${dia}TardeEntrada`] && updatedState.horario[`hora${dia}TardeSalida`]) {
+              const horaInicioTarde = dayjs(updatedState.horario[`hora${dia}TardeEntrada`], 'HH:mm');
+              const horaTerminoTarde = dayjs(updatedState.horario[`hora${dia}TardeSalida`], 'HH:mm');
+              minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
+          }
+
+          horasTotalesSemanales += ((minutosManana + minutosTarde) / 60);
+        });
+
+        updatedState.horario.totalHoras = horasTotalesSemanales;
+      }
+      else if (keys[1] === 'regionId') {
+        const selectedRegion = regiones.find((region) => region.id === value);
+
+        updatedState.createOrganismo= {
+          ...updatedState.createOrganismo,
+            regionId: selectedRegion.id,
+            otraRegion: selectedRegion.nombre,
+            comunaId: 0,
+            otraComuna: "",  
+        }
+      }
+      else if (keys[1] === 'comunaId') {
+        const selectedComuna = comunas.find((comuna) => comuna.id === value);
+
+        updatedState.createOrganismo = {
+          ...updatedState.createOrganismo,
+            comunaId: selectedComuna.id,
+            otraComuna: selectedComuna.nombre,  
+        }
+      }
+      else {
+        updatedState[keys[0]] = {
+            ...updatedState[keys[0]],
+            [keys[1]]: type === 'checkbox' ? checked : value
+        }; 
       }
       return updatedState;
     });
@@ -353,9 +340,11 @@ const Options = () => {
     fetchData(email, setInputs, setIsButtonDisabled, setOpen);
     fetchCtGen(setCg);
     fetchCtPer(setCp);
+    fetchComunas(setComunas);
+    fetchRegiones(setRegiones);
     //fetchPractica(setCounters);
-    obtenerInformacionPracticas("primera");
-    obtenerInformacionPracticas("segunda");
+    fetchInfoPracticas("primera", setInformacionPrimera);
+    fetchInfoPracticas("segunda", setInformacionSegunda);
   }, [email]);
 
   const tiers = [
@@ -419,8 +408,8 @@ const Options = () => {
           component="span"
           >
             <Icon>account_circle</Icon>
+            <MoreVertIcon />
         </IconButton>
-        <MoreVertIcon />
       </IconButton>
       <Menu
         id="long-menu"
@@ -494,12 +483,13 @@ const Options = () => {
       <ModalPostulacionPractica
         style={style}
         open={modalPostulacion}
+        setOpen={setModalPostulacionOpen}
+        regiones={regiones}
+        comunas={comunas}
         practicas={practicas}
         setPracticas={setPracticas}
         handleChangePracticas={handleChangePracticas}
-        handleClose={() => setModalPostulacionOpen(false)}
         handleButtonClickPostulacion={handleButtonClickPostulacion}
-        
       />
     </ThemeProvider>
   );

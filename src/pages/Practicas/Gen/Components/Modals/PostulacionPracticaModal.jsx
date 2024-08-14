@@ -15,8 +15,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; //npm install @mui/x-date-pickers
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import CustomTable from './TableHorario/Tabla';
-import TimePickerValue from './TableHorario/TimePicker';
+import CustomTable from './TableHorario/CustomTable';
 
 dayjs.extend(localizedFormat);
 dayjs.locale('es');
@@ -24,33 +23,14 @@ dayjs.locale('es');
 let mensajeFechaInicio = "";
 let mensajeFechaTermino = "";
 
-const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPracticas, handleChangePracticas, handleButtonClickPostulacion}) => {
-  
-  const calcularHorasPorDia = (dia) => {
-    let minutosManana = 0;
-    let minutosTarde = 0;
-
-    if (practicas) {
-      if (practicas.horario[`hora${dia}MananaEntrada`] && practicas.horario[`hora${dia}MananaSalida`]) {
-          const horaInicioManana = dayjs(practicas.horario[`hora${dia}MananaEntrada`], 'HH:mm');
-          const horaTerminoManana = dayjs(practicas.horario[`hora${dia}MananaSalida`], 'HH:mm');
-          minutosManana = horaTerminoManana.diff(horaInicioManana, 'minute');
-      }
-
-      if (practicas.horario[`hora${dia}TardeEntrada`] && practicas.horario[`hora${dia}TardeSalida`]) {
-          const horaInicioTarde = dayjs(practicas.horario[`hora${dia}TardeEntrada`], 'HH:mm');
-          const horaTerminoTarde = dayjs(practicas.horario[`hora${dia}TardeSalida`], 'HH:mm');
-          minutosTarde = horaTerminoTarde.diff(horaInicioTarde, 'minute');
-      }
-    }
-    return (minutosManana + minutosTarde) / 60;
-  };
-
+const ModalPostulacionPractica = ({ style, open, setOpen, practicas, regiones, comunas,  setPracticas, handleChangePracticas, handleButtonClickPostulacion}) => {
   
   const [errors, setErrors] = useState({});
 
   const handleButtonClick = () => {
+
     const newErrors = {};
+
     if (!practicas.semestre.UltSem) newErrors.UltSem = true;
     if (!practicas.createOrganismo.nombreOrganismo) newErrors.nombreOrganismo = true;
     if (!practicas.createSupervisor.nombre) newErrors.nombreSupervisor = true;
@@ -63,7 +43,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
     if (!practicas.createOrganismo.otraRegion) newErrors.region = true;
     if (!practicas.createOrganismo.otraComuna) newErrors.comuna = true;
     if (!practicas.practica.descripcion) newErrors.descripcion = true;
-    if (!practicas.horario.totalHoras || parseFloat(practicas.horario.totalHoras) <= 0) newErrors.totalHoras = true;
+    if (!practicas.horario.totalHoras || parseFloat(practicas.horario.totalHoras) <= 0 || practicas.horario.totalHoras === "NaN") newErrors.totalHoras = true;
 
     if(!practicas.practica.fechaInicio){
       newErrors.fechaInicio = true;
@@ -86,12 +66,6 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
       newErrors.fechaTermino = true;
       mensajeFechaTermino = "No puede ser la misma fecha que la fecha de inicio";
     }
-
-    ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'].forEach((dia) => {
-      if (calcularHorasPorDia(dia) < 0) {
-        newErrors.horasSemanales = true;
-      }
-    });
 
     if((practicas.horario.horaLunesMananaEntrada && !(practicas.horario.horaLunesMananaSalida)) || (!(practicas.horario.horaLunesMananaEntrada) && practicas.horario.horaLunesMananaSalida)){
       newErrors.lunesMananaIncompleto = true;
@@ -189,66 +163,25 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
   };
   
   const handleChangeNum = (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = parseInt(e.target.value.replace(/[^0-9]/g, ''));
     handleChangePracticas(e);
   };
+  
+  const filteredComunas = comunas.filter(
+    (comuna) => comuna.idRegion === practicas.createOrganismo.regionId
+  );
 
-  const adapter = (nombre, valor) => {
-    return {
-        target: {
-            name: nombre,
-            value: valor,
-            type: 'text'
-        }
-    };
+  const menuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: 224, // Limita la altura del menú desplegable (6 elementos aprox.)
+        width: 250,
+      },
+    },
   };
 
-  const data = [
-    [
-      'Lunes', 
-      <TimePickerValue errorHorario={errors.lunesMananaDesfasado ? errors.lunesMananaDesfasado : errors.lunesMananaIncompleto} hora={practicas.horario.horaLunesMananaEntrada === "" ? null : dayjs(practicas.horario.horaLunesMananaEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesMananaEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.lunesMananaDesfasado ? errors.lunesMananaDesfasado : errors.lunesMananaIncompleto} hora={practicas.horario.horaLunesMananaSalida === "" ? null : dayjs(practicas.horario.horaLunesMananaSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesMananaSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.lunesTardeDesfasado ? errors.lunesTardeDesfasado : errors.lunesTardeIncompleto} hora={practicas.horario.horaLunesTardeEntrada === "" ? null : dayjs(practicas.horario.horaLunesTardeEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesTardeEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.lunesTardeDesfasado ? errors.lunesTardeDesfasado : errors.lunesTardeIncompleto} hora={practicas.horario.horaLunesTardeSalida === "" ? null : dayjs(practicas.horario.horaLunesTardeSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaLunesTardeSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <div>{calcularHorasPorDia("Lunes")} </div>
-    ],
-    [
-      'Martes',
-      <TimePickerValue errorHorario={errors.martesMananaDesfasado ? errors.martesMananaDesfasado : errors.martesMananaIncompleto} hora={practicas.horario.horaMartesMananaEntrada === "" ? null : dayjs(practicas.horario.horaMartesMananaEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesMananaEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.martesMananaDesfasado ? errors.martesMananaDesfasado : errors.martesMananaIncompleto} hora={practicas.horario.horaMartesMananaSalida === "" ? null : dayjs(practicas.horario.horaMartesMananaSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesMananaSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.martesTardeDesfasado ? errors.martesMananaDesfasado : errors.martestardeIncompleto} hora={practicas.horario.horaMartesTardeEntrada === "" ? null : dayjs(practicas.horario.horaMartesTardeEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesTardeEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.martestardeDesfasado ? errors.martestardeDesfasado : errors.martestardeIncompleto} hora={practicas.horario.horaMartesTardeSalida === "" ? null : dayjs(practicas.horario.horaMartesTardeSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMartesTardeSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <div>{calcularHorasPorDia("Martes")} </div>
-    ],
-    [
-      'Miércoles',
-      <TimePickerValue errorHorario={errors.miercolesMananaDesfasado ? errors.miercolesMananaDesfasado : errors.miercolesMananaIncompleto} hora={practicas.horario.horaMiercolesMananaEntrada === "" ? null : dayjs(practicas.horario.horaMiercolesMananaEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesMananaEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.miercolesMananaDesfasado ? errors.miercolesMananaDesfasado : errors.miercolesMananaIncompleto} hora={practicas.horario.horaMiercolesMananaSalida === "" ? null : dayjs(practicas.horario.horaMiercolesMananaSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesMananaSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.miercolestardeDesfasado ? errors.miercolestardeDesfasado : errors.miercolestardeIncompleto} hora={practicas.horario.horaMiercolesTardeEntrada === "" ? null : dayjs(practicas.horario.horaMiercolesTardeEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesTardeEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.miercolestardeDesfasado ? errors.miercolestardeDesfasado : errors.miercolestardeIncompleto} hora={practicas.horario.horaMiercolesTardeSalida === "" ? null : dayjs(practicas.horario.horaMiercolesTardeSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaMiercolesTardeSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <div>{calcularHorasPorDia("Miercoles")} </div>
-    ],
-    [
-      'Jueves',
-      <TimePickerValue errorHorario={errors.juevesMananaDesfasado ? errors.juevesMananaDesfasado : errors.juevesMananaIncompleto} hora={practicas.horario.horaJuevesMananaEntrada === "" ? null : dayjs(practicas.horario.horaJuevesMananaEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesMananaEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.juevesMananaDesfasado ? errors.juevesMananaDesfasado : errors.juevesMananaIncompleto} hora={practicas.horario.horaJuevesMananaSalida === "" ? null : dayjs(practicas.horario.horaJuevesMananaSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesMananaSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.juevestardeDesfasado ? errors.juevestardeDesfasado : errors.juevestardeIncompleto} hora={practicas.horario.horaJuevesTardeEntrada === "" ? null : dayjs(practicas.horario.horaJuevesTardeEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesTardeEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.juevestardeDesfasado ? errors.juevestardeDesfasado : errors.juevestardeIncompleto} hora={practicas.horario.horaJuevesTardeSalida === "" ? null : dayjs(practicas.horario.horaJuevesTardeSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaJuevesTardeSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <div>{calcularHorasPorDia("Jueves")} </div>
-    ],
-    [
-      'Viernes',
-      <TimePickerValue errorHorario={errors.viernesMananaDesfasado ? errors.viernesMananaDesfasado : errors.viernesMananaIncompleto} hora={practicas.horario.horaViernesMananaEntrada === "" ? null : dayjs(practicas.horario.horaViernesMananaEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesMananaEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.viernesMananaDesfasado ? errors.viernesMananaDesfasado : errors.viernesMananaIncompleto} hora={practicas.horario.horaViernesMananaSalida === "" ? null : dayjs(practicas.horario.horaViernesMananaSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesMananaSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.viernestardeDesfasado ? errors.viernestardeDesfasado : errors.viernestardeIncompleto} hora={practicas.horario.horaViernesTardeEntrada === "" ? null : dayjs(practicas.horario.horaViernesTardeEntrada, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesTardeEntrada', hora ? hora.format("HH:mm") : ""))}/>,
-      <TimePickerValue errorHorario={errors.viernestardeDesfasado ? errors.viernestardeDesfasado : errors.viernestardeIncompleto} hora={practicas.horario.horaViernesTardeSalida === "" ? null : dayjs(practicas.horario.horaViernesTardeSalida, "HH:mm")} setHorario={(hora) => handleChangePracticas(adapter('horario.horaViernesTardeSalida', hora ? hora.format("HH:mm") : ""))}/>,
-      <div>{calcularHorasPorDia("Viernes")} </div>
-    ],
-
-  ];
-  
     return (
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={{ ...style, overflow: "auto", maxHeight: "90vh", maxWidth: "125vh" }}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Formulario para postulación a {practicas.practica.ocasion} Práctica Profesional
@@ -284,7 +217,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
               <FormControlLabel
                 control={
                   <Checkbox
-                    id = "practica_homologacion"
+                    id = "practica.homologacion"
                     name="practica.homologacion"
                     checked={practicas.practica.homologacion}
                     onChange={handleChangePracticas}
@@ -304,7 +237,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="nombre_organismo"
+                id="createOrganismo.nombreOrganismo"
                 label="Nombre del Organismo"
                 name="createOrganismo.nombreOrganismo"
                 autoComplete="nombre_organismo"
@@ -317,7 +250,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="nombre_supervisor"
+                id="createSupervisor.nombre"
                 label="Nombre del Supervisor"
                 name="createSupervisor.nombre"
                 autoComplete="nombre_supervisor"
@@ -330,7 +263,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="cargo_supervisor"
+                id="createSupervisor.cargo"
                 label="Cargo del Supervisor"
                 name="createSupervisor.cargo"
                 autoComplete="cargo_supervisor"
@@ -344,7 +277,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="correo_supervisor"
+                id="createSupervisor.correo"
                 label="Correo del Supervisor"
                 name="createSupervisor.correo"
                 autoComplete="correo_supervisor"
@@ -357,7 +290,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="telefono_organismo"
+                id="createOrganismo.telefono"
                 label="Teléfono"
                 name="createOrganismo.telefono"
                 autoComplete="telefono_organismo"
@@ -374,7 +307,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     margin="normal"
                     required
                     fullWidth
-                    id="division_departamento"
+                    id="createOrganismo.divisionDepartamento"
                     label="División / Departamento"
                     name="createOrganismo.divisionDepartamento"
                     autoComplete="division_departamento"
@@ -389,7 +322,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     margin="normal"
                     required
                     fullWidth
-                    id="seccion_unidad"
+                    id="createOrganismo.seccionUnidad"
                     label="Sección / Unidad"
                     name="createOrganismo.seccionUnidad"
                     autoComplete="seccion_unidad"
@@ -406,30 +339,46 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                     margin="normal"
                     required
                     fullWidth
-                    id="region"
+                    select
+                    id="createOrganismo.region"
                     label="Región"
-                    name="createOrganismo.otraRegion"
+                    name="createOrganismo.regionId"
                     autoComplete="region"
-                    value={practicas.createOrganismo.otraRegion}
+                    value={practicas.createOrganismo.regionId === 0 ? "" : practicas.createOrganismo.regionId}
                     onChange={handleChangePracticas}
                     error = {errors.region}
                     helperText={errors.region ? "Este campo es obligatorio" : ""}
-                  />
+                    SelectProps={{
+                      MenuProps: menuProps,
+                    }}
+                  >
+                    {regiones.map((regiones) => (
+                      <MenuItem key={regiones.id} value={regiones.id}> {`${regiones.simbolo}: ${regiones.nombre}`}</MenuItem> 
+                    ))}
+                    </TextField>
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
                     margin="normal"
                     required
                     fullWidth
-                    id="comuna"
+                    select
+                    id="createOrganismo.comuna"
                     label="Comuna"
-                    name="createOrganismo.otraComuna"
+                    name="createOrganismo.comunaId"
                     autoComplete="comuna"
-                    value={practicas.createOrganismo.otraComuna}
+                    value={practicas.createOrganismo.comunaId === 0 ? "" : practicas.createOrganismo.comunaId}
                     onChange={handleChangePracticas}
                     error = {errors.comuna}
                     helperText={errors.comuna ? "Este campo es obligatorio" : ""}
+                    SelectProps={{
+                      MenuProps: menuProps,
+                    }}
                   >
+                    {filteredComunas.map((comuna) => (
+                      <MenuItem key={comuna.id} value={comuna.id}> {comuna.nombre} </MenuItem>
+                      ))}
+
                   </TextField>
                 </Grid>
               </Grid>
@@ -437,7 +386,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="direccion_organismo"
+                id="createOrganismo.direccion"
                 label="Dirección del Organismo"
                 name="createOrganismo.direccion"
                 autoComplete="direccion_organismo"
@@ -491,7 +440,6 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                           helperText: errors.fechaTermino ? mensajeFechaTermino : ""
                         },
                       }}
-                      
                       />
                     </DemoContainer>
                   </LocalizationProvider>
@@ -503,15 +451,16 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
               </Typography>
               <Typography id="modal-modal-description">
                 Ingrese el horario de práctica profesional en formato de 12 horas (am/pm).<br />
-                Por favor no dejar jornada de entrada sin salida o viseversa. También asegurese de que las horas están bien colocadas, 
+                Por favor no dejar jornada de entrada sin salida o viseversa. También asegurese de que las horas estén bien colocadas, 
                 de no ser así se marcarán las casillas en rojo.
               </Typography>
             </Box>
             <Box sx= {{ mt: 2 }}>
               <CustomTable
                 id = "horario"
-                data = {data}
-                horas_semanales = {practicas.horario.totalHoras}
+                practicas = {practicas}
+                handleChangePracticas = {handleChangePracticas}
+                errors = {errors}
                 />
             </Box>
             <Box sx={{ mt: 2 }}>
@@ -525,7 +474,7 @@ const ModalPostulacionPractica = ({ style, open, handleClose, practicas, setPrac
                 margin="normal"
                 required
                 fullWidth
-                id="actividades"
+                id="practica.descripcion"
                 label="Descripción de Actividades"
                 name="practica.descripcion"
                 value={practicas.practica.descripcion}

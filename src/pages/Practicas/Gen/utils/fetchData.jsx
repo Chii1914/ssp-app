@@ -90,3 +90,46 @@ export const fetchPractica = async (setCounters) => {
     console.error("Error fetching data: ", error);
   }
 };
+
+
+export const fetchInfoPracticas = async (ocasion_practica, setInfo) => {
+  const token = Cookies.get("token");
+  await axios.get(`http://localhost:3000/api/practica/${ocasion_practica}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(response => {
+    const { status, contadores, practicas } = response.data;
+    setInfo(prevState => ({
+      ...prevState,
+      status: status,
+      total: contadores ? contadores.sin_evaluar + contadores.sin_accion + contadores.evaluadas : 0,
+      contadores: contadores,
+      practicas: practicas
+    }));
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+};
+
+
+export const fetchRegiones = async (setRegiones) => {
+  const token = Cookies.get("token");
+  await axios.get(`http://localhost:3000/api/region`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then( response => {
+    setRegiones(response.data);
+  }).catch(error => {
+    console.error('Error fetching data:', error);
+  });
+}
+
+export const fetchComunas = async (setComunas) => {
+  const token = Cookies.get("token");
+  await axios.get(`http://localhost:3000/api/comuna`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then( response => {
+  setComunas(response.data)
+  }).catch(error => {
+    console.error('Error fetching data:', error);
+  });
+}
